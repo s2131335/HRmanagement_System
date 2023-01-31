@@ -1,0 +1,86 @@
+extends ss
+
+block content
+    //- #form.vh-100(style='background-color: #6D72C3;')
+    form.vh-100.needs-validation( novalidate)
+        .container.py-5.h-100
+            .row.d-flex.justify-content-center.align-items-center.h-100
+                .col-12.col-md-8.col-lg-6.col-xl-5
+                    .alert.alert-danger.fade.show(id='err' style='display:none')
+                    .card(style='border-radius: 1rem;')
+                        .card-body.p-5.text-center
+
+                            img(src="/image/logo.png", height='50' width='auto', loading='lazy')
+                            h5.mb-4.mt-2 人力資源系統登錄
+                            
+                            .form-outline.mb-4
+                                input#email.form-control.form-control-lg(type='email' name='email' required)
+                                label.form-label(for='typeEmailX-2') 電郵地址
+                                .invalid-feedback 
+                                    p.small 請輸入您的電郵地址。
+                            .form-outline.mb-4
+                                input#password.form-control.form-control-lg(type='password' name='password' required)
+                                label.form-label(for='typePasswordX-2') 密碼
+                                .invalid-feedback 
+                                    p.small 請輸入密碼。
+                            // Checkbox
+                            //- .form-check.d-flex.justify-content-start.mb-4
+                            //-     input#form1Example3.form-check-input(type='checkbox' value='')
+                            //-     label.form-check-label(for='form1Example3')    Remember password 
+                            //- button.btn.btn-primary.btn-lg.btn-block(style='background-color:#5941A9;' id='login') Login
+                            .text-center.pt-1.mb-5.pb-1
+                                button.btn.btn-primary.btn-block.fa-lg.gradient-custom-2.mb-3(id='login', type='submit') 登錄
+                                a.text-muted(href='/forget') 忘記密碼？
+
+                            .d-flex.align-items-center.justify-content-center.pb-4
+                                p.mb-0.me-2 沒有帳戶？
+                                a.btn.btn-outline-primary(href='/register') 立即註冊
+    //- include footer.pug
+    //- +footer()
+  
+                        
+block scrpts
+    script.
+
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (() => {
+        'use strict';
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation');
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms).forEach((form) => {
+            form.addEventListener('submit', (event) => {
+                form.checkValidity()
+                event.preventDefault();
+                event.stopPropagation();
+            form.classList.add('was-validated');
+            }, false);
+        });
+        })();
+
+
+        var data = {};
+        document.getElementById("login").addEventListener("click", function() {
+            if($('#email').val() === '' || $('#password').val() == ''){
+                //- alert('Please input enough credentials!');
+                return;
+            }
+            data = {
+                "username": document.getElementById('email').value,
+                "password": document.getElementById('password').value
+            };
+
+            postData('/helper/login', data, 'POST')
+            .then(data => {
+                if(data.status == "error"){
+                    $('#err').html(data.err_msg);
+                    document.getElementById('err').style.display = "block";
+
+                }else if(data.status == "ok"){
+                    window.location.replace('/');
+                }
+            });
+        
+        });

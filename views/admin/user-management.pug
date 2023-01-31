@@ -1,0 +1,146 @@
+extends ../user/nav
+
+block content
+    .container.pt-4.pb-5
+        .row
+            div.col-6 
+                h3 用戶
+            div.col-6.d-flex.justify-content-end
+                a.btn.btn-sm.btn-primary.align-self-center(href='/internal/new-user') + 新增用戶
+        
+        hr.my-2
+        table#table.stripe(style='width:100%')
+            thead
+                tr
+                    th(scope='col') #
+                    th(scope='col') 電子郵件
+                    th(scope='col') 權限
+                    th(scope='col') 操作
+            tbody
+                - var n = 1;
+                for item of users
+                    tr
+                        th(scope='row')=n++
+                        td=item.username
+                        td=item.role
+                        td
+                            //- button.btn.btn-info(id="e-"+item.username)
+                            //-     i.fa.fa-edit
+                            if cur_user.username != item.username && item.role != 'ADMIN'
+                                button.btn.btn-light.btn-rounded.btn-sm.fw-bold(id="e-"+item.username, data-toggle="modal", data-target="#exampleModal2", type='button', data-mdb-ripple-color='dark') 編輯
+                            else 
+                                button.btn.btn-light.btn-rounded.btn-sm.fw-bold(disabled) 編輯
+                                
+                            if cur_user.username != item.username 
+                                button.btn.btn-dark.btn-rounded.btn-sm.fw-bold(id="d-"+item.username, data-toggle="modal", data-target="#exampleModal", type='button', data-mdb-ripple-color='dark') 刪除
+                            else
+                                button.btn.btn-dark.btn-rounded.btn-sm.fw-bold(disabled=true) 刪除
+
+        #exampleModal2.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel2' aria-hidden='true')
+            .modal-dialog(role='document')
+                .modal-content
+                    .modal-header
+                        h5#exampleModalLabel2.modal-title 編輯用戶
+                        button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') &times;
+                    .modal-body
+                        input#username(type="hidden")
+                        .form-outline.mb-4
+                            input#new-password.form-control.form-control-lg(type='password' name='password' required)
+                            label.form-label(for='new-password') 新密碼
+                            .invalid-feedback
+                                p.small 請輸入用戶的新密碼
+                            
+                        .form
+                            select#role.form-select.form-select-lg(type='select' name='role' required)
+                                option(value='ADMIN') ADMIN
+                                option(value='USER' selected) USER
+                                
+                    .modal-footer
+                        button.btn.btn-secondary(type='button' data-dismiss='modal') 取消
+                        button.btn.btn-primary(id='edit', data-dismiss='modal') 編輯                  
+
+        #exampleModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true')
+            .modal-dialog(role='document')
+                .modal-content
+                    .modal-header
+                        h5#exampleModalLabel.modal-title 確認操作
+                        button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') &times;
+                    .modal-body
+                        p(id='modaltext') 您確定要刪除選定的用戶嗎？
+                    .modal-footer
+                        button.btn.btn-secondary(type='button' data-dismiss='modal') 取消
+                        button.btn.btn-danger(id='delete', data-dismiss='modal') 刪除
+
+
+block scrpts
+    script.
+
+        $(document).ready(function () {
+            $('#table').DataTable({
+                //- "dom": '<<t>lip>',
+                "language": {
+                    "lengthMenu": "每頁顯示 _MENU_ 條記錄",
+                    "zeroRecords": "沒有找到記錄",
+                    "info": "顯示第 _PAGE_ 頁，共 _PAGES_ 頁，總共 _TOTAL_ 條目",
+                    "infoEmpty": "無可用記錄",
+                    "infoFiltered": "（從 _MAX_ 條總記錄中過濾）",
+                    "search": "搜索",
+                    "paginate": {
+                        "first":      "首頁",
+                        "last":       "尾頁",
+                        "next":       "下頁",
+                        "previous":   "上頁"
+                    },
+                },
+                //- serverSide: true,
+                searching: true,
+                processing: true,
+                dataSrc: '',
+                initComplete: function() {
+                    $(this.api().table().container()).find('input').attr('autocomplete', 'off');
+                },
+            });
+        });
+
+        function handleEdit(event){
+            $('#exampleModalLabel2').html('編輯用戶 <strong>' + this.id.substring(2) + '</strong>');
+            $('#username').val(this.id.substring(2));
+        }
+
+        function handleDelete(event){
+            $('#modaltext').html('你確定你要刪除 <strong>' + this.id.substring(2) + '</strong> ?');
+            $('#delete').attr('onclick', 'postData("/internal/delete-user/'+this.id.substring(2)+'", {}, "DELETE").then(data=>{'+
+                'if(data.status == "error"){alert("刪除用戶時出現未知錯誤！");}else if(data.status == "ok"){window.location.replace("/internal/user-management");}})');
+        }
+
+        $(document).on('click', '.btn-light', handleEdit);
+        $(document).on('click', '.btn-dark', handleDelete);
+
+        //- async function postData(url = '', data = {}, method='POST') {
+        //-     const response = await fetch(url, {
+        //-         method: method,
+        //-         headers: {
+        //-         'Content-Type': 'application/json'
+        //-         },
+        //-         body: JSON.stringify(data) // body data type must match "Content-Type" header
+        //-     });
+        //-     return response.json(); // parses JSON response into native JavaScript objects
+        //- }
+
+        $("#edit").click(()=>{
+            var data = {
+                username: $('#username').val(),
+                password: $('#new-password').val(),
+                role: $('#role').val(),
+            };
+            postData('/internal/edit-user', data, 'PUT').then((data)=>{
+                if(data.status=='error'){
+                    alert("編輯用戶時出現未知錯誤！");
+                }
+                else if(data.status=='ok'){
+                    window.location.replace("/internal/user-management"); 
+                }
+            })
+        })

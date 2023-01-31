@@ -1,0 +1,138 @@
+extends ../public/ss
+
+//- block content 
+//-     p hi
+block content
+    //- #form.vh-100(style='background-color: #6D72C3;')
+    form.vh-100.needs-validation(novalidate)
+        .container.py-5.h-100
+            .row.d-flex.justify-content-center.align-items-center.h-100
+                .col-12
+                    .alert.alert-success.fade.show(id='suc' style='display:none') 新用戶添加成功，5秒後跳轉到首頁
+                    .alert.alert-danger.fade.show(id='err1' style='display:none') 電子郵件確認不匹配
+                    .alert.alert-danger.fade.show(id='err2' style='display:none') 密碼不匹配
+                    .alert.alert-danger.fade.show(id='err3' style='display:none') 用戶已存在，請加入新用戶
+                    .card(style='border-radius: 1rem;')
+                        .card-body.p-5.text-center
+
+                            h3.mb-5 新增用戶
+                            // email
+                            .row
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#email.form-control.form-control-lg(type='email' name='email' required)
+                                        label.form-label.fr(for='email') 電郵地址
+                                        .invalid-feedback 
+                                            p.small 請輸入電郵地址。
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#confirm-email.form-control.form-control-lg(type='email' name='confirm-email' required)
+                                        label.form-label.fr(for='confirm-email') 確認電郵地址
+                                        .invalid-feedback 
+                                            p.small 請確認電郵地址。
+
+                            // password
+                            .row 
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#password.form-control.form-control-lg(type='password' name='password' required)
+                                        label.form-label.fr(for='password') 密碼
+                                        .invalid-feedback 
+                                            p.small 請輸入密碼。
+
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#confirm-password.form-control.form-control-lg(type='password' name='confirm-password' required)
+                                        label.form-label.fr(for='confirm-password') 確認密碼
+                                        .invalid-feedback 
+                                            p.small 請確認密碼。
+
+                            .row 
+                                .col-md-12.mb-4 
+                                    .form 
+                                        select#role.form-select.form-select-lg(type='select' name='role' required)
+                                            option(value="USER" selected) 普通用戶
+                                            option(value="ADMIN") 管理員
+                                        .invalid-feedback 
+                                            p.small 請選擇角色. 
+
+                            .text-center.pt-1.mb-5.pb-1
+                                button.btn.btn-primary.btn-lg.btn-block(id='add' type='submit') 新增用戶
+                                a.text-muted(href='/internal/user-management') 返回
+
+        
+    style. 
+        .fr:after {
+            content:"*";
+            color: red;
+        }
+                            
+block scrpts 
+    script.
+        (() => {
+        'use strict';
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation');
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms).forEach((form) => {
+            form.addEventListener('submit', (event) => {
+                //- console.log(event);
+                form.checkValidity();
+                event.preventDefault();
+                event.stopPropagation();
+                form.classList.add('was-validated');
+                
+            }, false);
+        });
+        })();
+
+        //- async function postData(url = '', data = {}) {
+        //-     const response = await fetch(url, {
+        //-         method: 'POST',
+        //-         headers: {
+        //-         'Content-Type': 'application/json'
+        //-         },
+        //-         body: JSON.stringify(data) // body data type must match "Content-Type" header
+        //-     });
+        //-     return response.json(); // parses JSON response into native JavaScript objects
+        //- }
+
+        var data = {};
+        document.getElementById("add").addEventListener("click", function() {
+            if ($("#password").val() != $('#confirm-password').val()){
+                $('#suc').hide();
+                $('#err1').hide();
+                $('#err2').show();
+                $('#err3').hide();
+            }else if ($("#email").val() != '' && $('#password').val() != '') {
+                data = {
+                    "username": document.getElementById('email').value,
+                    "password": document.getElementById('password').value,
+                    "role"    : document.getElementById('role').value
+                };
+
+                postData('/helper/register', data,'POST')
+                .then(data => {
+                    if(data.status == "ok"){
+                        $('#suc').show();
+                        $('#err1').hide();
+                        $('#err2').hide();
+                        $('#err3').hide();
+                        // redirect to main page after succuessful registration
+                        $('#add').prop('disabled', true);
+                        $('#add').attr('class', 'btn btn-success btn-lg btn-block');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        setTimeout(()=>{window.location.replace('/');},5000);
+                    }
+                    else{
+                        $('#suc').hide();
+                        $('#err3').html(data.err_msg);
+                        $('#err1').hide();
+                        $('#err2').hide();
+                        $('#err3').show();
+                    }
+                });
+            }
+        });

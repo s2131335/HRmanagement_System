@@ -1,0 +1,442 @@
+extends ../user/nav
+
+block content
+    .container.pt-2.pb-5
+        //- .card.border-color-dark
+
+        //- .col-md-1.text-left
+        //-     a.text-muted(href='/internal/vacancy/info/'+onePosition._id) 返回
+        .row.mt-4.mx-2.mb-2
+            .col-md-9
+                h3(style="display:inline")=onePosition.positionName
+                a.btn.btn-link(role="button" style="color: #3b5998;" , data-toggle="modal", data-target="#exampleModal",)    
+                    p(style="display:inline") 詳情
+                    //- i.fas.fa-info
+            .col-md-3
+                h5.text-right.fst-italic.text-muted=onePosition.companyData.companyName
+        .row.mx-3.mb-3
+            table.stripe.my-0(style='width:100%')
+                thead
+                    tr
+                        th(scope='col') 工作性質
+                        th(scope='col') 聘用模式
+                        th(scope='col') 薪金
+                        th(scope='col') 學歷要求
+                        th(scope='col') 學科要求
+                        th(scope='col') 年資要求
+                tbody 
+                    tr
+                        td=onePosition.jobNature.join(', ')
+                        if onePosition.employment_type == '0'
+                            td 全職
+                        else 
+                            td 兼職
+                        td=onePosition.salary
+                        if onePosition.education == '0'
+                            td 中學畢業
+                        else if onePosition.eductaion == '1'
+                            td 大學本科畢業
+                        else if onePosition.education == '2'
+                            td 碩士畢業
+                        else
+                            td 博士或更高學歷
+                        td=onePosition.major.join(', ')
+                        td=onePosition.experience 
+
+                    
+                        
+        hr.my-0
+        .row.mt-3.mb-2
+            .col-md-9.border.rounded
+                .row.pt-3
+                    .col-md-4.mb-3
+                        .form                            
+                            select#salary.form-select.form-select-lg(type='select' name='salary')
+                                option.fr(value='' selected) 月薪
+                                option(value='<9999') <9999
+                                - var i = 10000;
+                                while i < 100000
+                                    option(value=i+' - '+(i+4999))=i+' - '+(i+4999)
+                                    - i=i+5000
+
+                    .col-md-4.mb-3
+                        .form                            
+                            select#education.form-select.form-select-lg(type='select' name='education')
+                                option.fr(value='' selected) 學歷要求
+                                option(value='0') 中學畢業
+                                option(value='1') 大學本科畢業
+                                option(value='2') 碩士畢業
+                                option(value='3') 博士或更高學歷
+
+                    //- .col-md-3.mb-3
+                    //-     .form                            
+                    //-         select#gpa.form-select.form-select-lg(type='select' name='education' required)
+                    //-             option.fr(value='' selected) GPA
+                    //-             - var i = 0.5;
+                    //-             while i <= 4
+                    //-                 option(value=i)='>'+i
+                    //-                 - i=i+0.5
+                    .col-md-4.mb-3
+                        .form
+                            select#employment.form-select.form-select-lg(type='select' name='employment' required)
+                                option.fr(value='' selected) 聘用模式
+                                option(value='0') 全職
+                                option(value='1') 兼職 
+                .row.pb-0
+                    .col-md-9.mb-2
+                        .form-outline
+                            input#major.form-control.form-control-lg(name='major' disabled value=" ")
+                            label.form-label(for='major') 學科要求。
+                    .col-md-3.mb-2
+                        .form 
+                            button.btn.btn-dark.btn-lg.btn-block(id='select-fields' type='button' data-toggle="modal", data-target="#exampleModal2") 選擇
+            .col-md-3.pt-2.pb-2
+                .row
+                    .col-md-8.mb-4
+                        .form 
+                            button.btn.btn-primary.btn-lg.btn-block(id='search' type='button') 搜索
+                    .col-md-4.mb-4
+                        .form.pt-2
+                            a.text-muted(href='/internal/vacancy/info/'+onePosition._id) 返回
+                .row
+                    .col.mb-2
+                        .form 
+                            button.btn.btn-success.btn-lg.btn-block(id='gen' type='button') 生成表格
+                    .col.mb-2
+                        .form 
+                            button.btn.btn-success.btn-lg.btn-block(id='sendtest' type='button') 發送測試
+                                        
+
+        table#table.stripe(style='width:100%')
+            thead
+                tr
+                    th(scope='col') 中文名
+                    th(scope='col') 電郵地址
+                    th(scope='col') 要求月薪
+                    th(scope='col') 學歷
+                    th(scope='col') 學科
+                    th(scope='col') 聘用模式
+                    th(scope='col') 資訊
+                    
+
+    #exampleModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true')
+        .modal-dialog.modal-lg(role='document')
+            .modal-content
+                .modal-header
+                    h5#exampleModalLabel.modal-title=onePosition.positionName
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') &times;
+                    
+                .modal-body
+                    table
+                        tr 
+                            td(style="width:50%") 公司名稱
+                            td=onePosition.companyData.companyName
+                        tr 
+                            td 商業登記編號
+                            td=onePosition.companyData.registerNumber
+                        tr 
+                            td 電郵地址
+                            td=onePosition.companyData.email
+                        tr 
+                            td 聯絡人
+                            td=onePosition.companyData.contactName 
+                        tr 
+                            td 聯絡電話
+                            td=onePosition.companyData.phone 
+                        tr
+                            td 工作性質
+                            td=onePosition.jobNature.join(', ')
+                        tr 
+                            td 聘用類型
+                            if onePosition.employMode == '0'
+                                td 合約制
+                            else 
+                                td 長工
+                        tr 
+                            td 聘用模式
+                            if onePosition.employment_type == '0'
+                                td 全職
+                            else 
+                                td 兼職
+                        tr
+                            td 薪金
+                            td=onePosition.salary
+                        tr 
+                            td 詳情
+                            td=onePosition.text
+                        tr 
+                            td 所需技能
+                            td=onePosition.skill_text 
+                        tr 
+                            td 牌照要求
+                            td=onePosition.cert
+                        tr 
+                            td 學歷要求
+                            if onePosition.education == '0'
+                                td 中學畢業
+                            else if onePosition.eductaion == '1'
+                                td 大學本科畢業
+                            else if onePosition.education == '2'
+                                td 碩士畢業
+                            else
+                                td 博士或更高學歷
+                        tr 
+                            td 最低行業年資要求
+                            td=onePosition.experience 
+                        tr 
+                            td 理想行業年資要求
+                            td=onePosition.opt_year 
+                        tr 
+                            td 學科要求
+                            td=onePosition.major.join(', ')
+                        tr
+                            td 行業要求與晉升機會
+                            td=onePosition.opportunity
+
+
+    #exampleModal2.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel2' aria-hidden='true')
+        .modal-dialog.modal-lg(role='document')
+            .modal-content
+                .modal-header
+                    h5#exampleModalLabel2.modal-title 請選擇學科要求
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                    span(aria-hidden='true') &times;
+                .modal-body
+                    .row
+                        .col-md-6
+                            for field of study1
+                                .form-check
+                                    input.form-check-input.select-fields2(id="select2::"+field type='checkbox' value=field)
+                                    label.form-check-label(for="select2::"+field)=field
+                        .col-md-6
+                            for field of study2
+                                .form-check
+                                    input.form-check-input.select-fields2(id="select2::"+field type='checkbox' value=field)
+                                    label.form-check-label(for="select2::"+field)=field
+
+
+    #exampleModal3.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true')
+        .modal-dialog.modal-lg(role='document')
+            .modal-content
+                .modal-header
+                    h5#exampleModalLabel.modal-title
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') &times;
+                .modal-body
+                    .container 
+                        table
+                            tr 
+                                td(style="width:40%") 中文名
+                                td#mchinese_name 
+                            tr
+                                td 英文名
+                                td#menglish_name 
+                            tr 
+                                td 性別
+                                td#mgender 
+                            tr 
+                                td 電郵地址
+                                td#memail 
+                            tr 
+                                td 教育程度
+                                td#meducation 
+                            tr 
+                                td 院校名稱
+                                td#minstitution
+                            tr 
+                                td 學位名稱
+                                td#mdegree 
+                            tr 
+                                td 感興趣的行業
+                                td#minterested
+                            tr 
+                                td 要求月薪
+                                td#msalary
+                            tr 
+                                td 簡歷
+                                td
+                                    a#mcv.btn.btn-link.btn-lg.btn-block(target="_blank") 查看
+        
+
+block scrpts
+    script.
+        var filter = {
+            salary_range: null,
+            education: null,
+            employment: null,
+            study: []
+        };
+        var major_selected = [];
+        let data = [];
+        $(document).ready(function () {
+            $('#table').dataTable({
+                "dom": '<<t>lip>',
+                "language": {
+                    "lengthMenu": "每頁顯示 _MENU_ 條記錄",
+                    "zeroRecords": "沒有找到記錄",
+                    "info": "顯示第 _PAGE_ 頁，共 _PAGES_ 頁，總共 _TOTAL_ 條目",
+                    "infoEmpty": "無可用記錄",
+                    "infoFiltered": "（從 _MAX_ 條總記錄中過濾）",
+                    "search": "搜索",
+                    "paginate": {
+                        "first":      "首頁",
+                        "last":       "尾頁",
+                        "next":       "下頁",
+                        "previous":   "上頁"
+                    },
+                },
+                serverSide: true,
+                //- searching: true,
+                processing: true,
+                bFilter: false,
+                //- retrieve: true,
+                columns: [
+                    {data: "chinese_name"},
+                    {data: "email"},
+                    {data: "salary_range"},
+                    {data: "education"},
+                    {data: "study"},
+                    {data: "employment"},
+                    {data: "info", orderable: false}
+                ],
+                ajax:{
+                    url: "/internal/get-candidates/#{onePosition._id}",
+                    type: "GET",
+                    data: (da)=>{
+                        da.filter = filter;
+                        console.log(filter);
+                    },
+                    "dataSrc": (da)=>{
+                        let i = 0;
+                        data = da.data;
+                        for(const d of da.data){
+                            if(d.employment == "0"){
+                                d.employment = "全職";
+                            }else{
+                                d.employment = "兼職";
+                            }
+                            if(d.education == "0"){
+                                d.education = "中學畢業";
+                            }else if(d.education == "1"){
+                                d.education = "大學畢業";
+                            }else if(d.education == "2"){
+                                d.education = "碩士畢業";
+                            }else{
+                                d.education = "博士或更高學歷";
+                            }
+                            d.info = `
+                                <button class="btn btn-light btn-rounded btn-sm fw-bold" data-toggle="modal", data-target="#exampleModal3", type='button', data-mdb-ripple-color='dark' onclick='handlePrompt(${i++})'> 
+                                    <i class="fas fa-info"></i>
+                                </button>
+                            `
+                        }
+                        //- console.log(da.data);
+                        return da.data;
+                    }
+                }
+            });
+
+            var table = $('#table').DataTable();
+            $("#search").click(()=>{
+                filter.salary_range = $('#salary').val();
+                filter.education = $('#education').val();
+                filter.employment = $('#employment').val();
+                filter.study = major_selected;
+                table.draw();
+            })
+
+        })
+
+        function handlePrompt(i){
+            $('#mchinese_name').html(data[i].chinese_name);
+            $('#menglish_name').html(data[i].first_name + " " + data[i].last_name);
+            $('#mgender').html(data[i].gender);
+            $('#memail').html(data[i].email);
+            $('#meducation').html(data[i].education);
+            $('#minstitution').html(data[i].institution_name);
+            $('#mdegree').html(data[i].name_of_degree);
+            $('#minterested').html(data[i].interested_industry.join(" "));
+            $('#msalary').html(data[i].salary_range);
+            $('#mcv').attr('href', "/upload/view/can/"+data[i]._id );
+        }
+
+        function handleChange2(event){
+            var sd = this.id.split('::')[1];
+            if(major_selected.includes(sd)){
+                major_selected = major_selected.filter(obj=>{
+                    return obj != sd;
+                });
+            }else
+                major_selected.push(this.id.split('::')[1]);
+            $('#major').val(major_selected.join('、'));
+        }
+
+        $(document).on('change', '.select-fields2', handleChange2);
+
+        async function postData2(url = '', data = {}) {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data) // body data type must match "Content-Type" header
+            });
+            return response; // parses JSON response into native JavaScript objects
+        }
+
+        $('#gen').click(()=>{
+            var data = {
+                filter: filter
+            };
+            $('#gen').prop('disabled', true);
+            $('#gen').empty();
+            $('#gen').append(`
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span class="sr-only">Loading...</span>
+            `)
+
+            console.log(data);
+            postData2('/internal/getCSV/', data, 'POST').then(resp => resp.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                // the filename you want
+                a.download = '#{onePosition.positionName}.csv';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                $('#gen').prop('disabled', false);
+                $('#gen').empty();
+                $('#gen').html('生成表格');
+            })
+            .catch(() => alert('Error downloading file!'));
+        })
+        
+        $('#sendtest').click(()=>{
+            var data = {
+                filter: filter
+            };
+            $('#sendtest').prop('disabled', true);
+            $('#sendtest').empty();
+
+            $('#sendtest').append(`
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span class="sr-only">Loading...</span>
+            `)
+
+            postData('/internal/sendtests/#{onePosition._id}', data)
+            .then(data=>{
+                if(data.status == "ok"){
+                    alert(data.message);
+                    window.location.reload();
+                }else{
+                    alert("Error sending apt tests!");
+                }
+                $('#sendtest').prop('disabled', false);
+                $('#sendtest').empty();
+                $('#sendtest').html('發送測試');
+            });
+        })

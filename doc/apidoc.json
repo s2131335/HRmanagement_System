@@ -1,0 +1,39 @@
+{
+  "name": "HR Management System API documentation",
+  "description": "Documentation for system setup and the REST API access provided at HR Management System",
+  "title": "HR Management System Documentation",
+  "url" : "http://16.162.50.115:8080",
+  "sampleUrl": false,
+  "output": "/tmp/apidoc-output",
+  "input": [
+    "example"
+  ],
+  "order": [
+    "Internal-User",
+    "Internal-Email",
+    "Internal-Vacancy",
+    "Internal-Calendar",
+    "Internal-Candidate",
+    "Company",
+    "Candidate",
+    "Calendar",
+    "AptTest",
+    "Up/Download",
+    "Helper",
+    "Testing"
+  ],
+  "header": {
+    "title": "System Setup",
+    "filename": "header.md"
+  },
+  "footer": {
+    "title": "Appendix - Directory Structure",
+    "filename": "footer.md"
+  },
+  "template": {
+    "showRequiredLabels": false,
+    "withCompare": false,
+    "withGenerator": true,
+    "aloneDisplay": false
+  }
+}

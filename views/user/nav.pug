@@ -1,0 +1,95 @@
+doctype html
+html
+    head
+        block head
+        title= title
+        link(rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css' integrity='sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm' crossorigin='anonymous')
+        link(rel='stylesheet', href='http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css')
+        // Font Awesome
+        link(href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css' rel='stylesheet')
+        // Google Fonts
+        link(href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap' rel='stylesheet')
+        // MDB
+        link(href='https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.css' rel='stylesheet')
+        // datatables
+        link(rel='stylesheet', type='text/css', href='https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.css')
+        link(rel='stylesheet' href='https://fonts.googleapis.com/icon?family=Material+Icons')
+        link(rel='stylesheet' href='https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css')
+
+        //- link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css') 
+    body
+        nav.navbar.navbar-expand-lg.navbar-light.bg-light.sticky-top
+            // Container wrapper
+            .container-fluid
+                // Toggle button
+                button.navbar-toggler(type='button', data-mdb-toggle='collapse', data-mdb-target='#navbarSupportedContent', aria-controls='navbarSupportedContent', aria-expanded='false', aria-label='Toggle navigation')
+                    i.fas.fa-bars
+                // Collapsible wrapper
+                #navbarSupportedContent.collapse.navbar-collapse
+                    // Navbar brand
+                    a.navbar-brand.mt-2.mt-lg-0(href='/internal/user-management')
+                        img(src="/image/logo.png", height='30', alt='MDB Logo', loading='lazy')
+                    // Left links
+                    if cur_user.role=='ADMIN' 
+                        ul.navbar-nav.me-auto.mb-2.mb-lg-0
+                            li.nav-item
+                                a.nav-link(href='/internal/user-management') 用戶管理
+                            li.nav-item
+                                a.nav-link(href='/internal/candidate-management') 候選人才管理
+                            li.nav-item
+                                a.nav-link(href='/internal/vacancy-management') 職位空缺管理
+                            li.nav-item
+                                a.nav-link(href='/internal/user-calendar') 面試預約
+
+                   
+               
+                // Right elements
+                .d-flex.align-items-center
+                    //- ul.navbar-nav.me-auto.mb-2.mb-lg-0
+                            li.nav-item
+                            a.nav-link(href='/internal/account') 帳戶
+                            li.nav-item
+                            a.nav-link(href='/helper/logout') 登出
+                    // Icon
+                    //- a.text-reset.me-3(href='#')
+                    //-     i.fas.fa-shopping-cart
+                    // Notifications
+                    //- .dropdown
+                    //-     a#navbarDropdownMenuLink.text-reset.me-3.dropdown-toggle.hidden-arrow(href='#', role='button', data-mdb-toggle='dropdown', aria-expanded='false')
+                    //-         i.fas.fa-bell
+                    //-         span.badge.rounded-pill.badge-notification.bg-danger 1
+                    //-     ul.dropdown-menu.dropdown-menu-end(aria-labelledby='navbarDropdownMenuLink')
+                    //-         li
+                    //-             a.dropdown-item(href='#') Some news
+                    //-         li
+                    //-             a.dropdown-item(href='#') Another news
+                    //-         li
+                    //-             a.dropdown-item(href='#') Something else here
+                    // Avatar
+                    .dropdown
+                        a#navbarDropdownMenuLink.text-reset.me-3.dropdown-toggle(href='#', role='button', data-mdb-toggle='dropdown', aria-expanded='false')=cur_user.username
+                            //- img.rounded-circle(src='https://mdbcdn.b-cdn.net/img/new/avatars/2.webp', height='25', alt='Black and White Portrait of a Man', loading='lazy')
+                            //- i.fas.fa-user-circle
+                        //- a#navbarDropdownMenuAvatar.dropdown-toggle.d-flex.align-items-center.hidden-arrow(href='#')
+                        //-     i.fas.fa-user-circle
+                        ul.dropdown-menu.dropdown-menu-end(aria-labelledby='navbarDropdownMenuLink')
+                            if cur_user.role == "ADMIN"
+                                li
+                                    a.dropdown-item(href="/internal/email-template") 電郵模板
+                            else if cur_user.role == "COM"
+                                li 
+                                    a.dropdown-item(href="/comp/edit") 編輯資料
+                            li
+                                a.dropdown-item(href='/internal/account') 重設密碼
+                            li
+                                a.dropdown-item(href='/helper/logout') 登出
+                            
+
+        block content
+        script(type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.js')
+        script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js' )
+        script(src='https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js' integrity='sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q' crossorigin='anonymous')
+        script(src='https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js' integrity='sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl' crossorigin='anonymous')
+        script(type='text/javascript' charset='utf8' src='https://cdn.datatables.net/1.13.1/js/jquery.dataTables.js')
+        script(src="/scripts/util.js")
+        block scrpts

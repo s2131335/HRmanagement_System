@@ -1,0 +1,97 @@
+extends ss
+
+block content
+    form#ff.vh-100.needs-validation(novalidate)
+        .container.py-5.h-100
+            .row.d-flex.justify-content-center.align-items-center.h-100
+                .col-12.col-md-8.col-lg-6.col-xl-5
+
+                    //- .alert.alert-danger.fade.show(id='err' style='display:none') No email is entered!
+                    .alert.alert-danger.fade.show(id='err-sys' style='display:none') 
+                    .alert.alert-success.fade.show(id='suc' style='display:none') 重置鏈接已發送！ 請查看你的郵箱
+                    .alert.alert-secondary.fade.show(id='sending' style='display:none') 正在發送電子郵件，請稍候...
+                    .alert.alert-danger.fade.show(id='not-found' style='display:none') 電郵地址沒有找到
+
+
+                    .card(style='border-radius: 1rem;')
+                        .card-body.p-5.text-center
+
+                            h3.mb-5 忘記密碼
+                            .form-outline.mb-4
+                                input#email.form-control.form-control-lg(type='email' name='email' required)
+                                label.form-label(for='typeEmailX-2') 電郵地址
+                                .invalid-feedback 
+                                    p.small 請輸入您的電郵地址
+
+                            .text-center.pt-1.mb-5.pb-1
+                                button.btn.btn-primary.btn-lg.btn-block(id='send', type='submit') 發送
+                                a.text-muted(href='/') 返回
+
+
+block scrpts
+    script.
+        $("#ff").submit(function(e) {
+            e.preventDefault();
+        });
+
+        (() => {
+        'use strict';
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation');
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms).forEach((form) => {
+            form.addEventListener('submit', (event) => {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+            }, false);
+        });
+        })();
+
+        //- async function postData(url = '', data = {}) {
+        //-     const response = await fetch(url, {
+        //-         method: 'PUT',
+        //-         headers: {
+        //-         'Content-Type': 'application/json'
+        //-         },
+        //-         body: JSON.stringify(data) // body data type must match "Content-Type" header
+        //-     });
+        //-     return response.json(); // parses JSON response into native JavaScript objects
+        //- }
+
+        var data = {};
+        document.getElementById("send").addEventListener("click", function() {
+             $('#err-sys').hide();
+             $('#err').hide();
+             if ($("#email").val() != '') {
+                $('#sending').show();
+                data = {
+                    "username": document.getElementById('email').value,
+                };
+                postData('/helper/forget', data,'PUT')
+                .then(data => {
+                    if(data.status == "ok"){
+                        $('#sending').hide();
+                        $('#err').hide();
+                        $('#suc').show();
+                        setTimeout(()=>{window.location.replace('/');},2000);
+                    }else if (data.status == "not-found"){
+                        $('#sending').hide();
+                        $('#not-found').show();
+                        $('#suc').hide();
+                        //- setTimeout(()=>{$('#not-found').hide();},2000);
+                    }else{
+                        $('#sending').hide();
+                        $('#err-sys').html(data.err_msg || "電子郵件無法發送，請稍後再試");
+                        $('#err-sys').show();
+                        $('#suc').hide();
+                        //- setTimeout(()=>{$('#err-sys').hide();},2000);
+                    }
+                });
+            }
+        });
+

@@ -1,0 +1,510 @@
+extends ../public/ss
+
+block content
+    //- #form.vh-100(style='background-color: #6D72C3;')
+    form#form.vh-100.needs-validation(novalidate)
+        .container.py-5.h-100
+            .row.d-flex.justify-content-center.align-items-center.h-100
+                .col-12
+                    .alert.alert-success.faddde.show(id='suc' style='display:none') 職位空缺修改成功，5秒後跳轉到首頁。
+                    .alert.alert-success.fade.show(id='suc2' style='display:none') 文件上傳成功
+                    .alert.alert-danger.fade.show(id='err1' style='display:none') 請選擇工作性質
+                    .alert.alert-danger.fade.show(id='err2' style='display:none') 請選擇學科要求
+                    .alert.alert-danger.fade.show(id='err3' style='display:none') 
+                    .alert.alert-success.fade.show(id='suc3' style='display:none') 文件移除成功
+                    .alert.alert-success.fade.show(id='err4' style='display:none') 文件移除發生未知錯誤
+                    .card(style='border-radius: 1rem;')
+                        .card-body.p-5.text-center
+
+                            h3.mb-5 職位空缺詳情
+                            // company name
+                            .row
+                                .col-md-12.mb-4
+                                    .form-outline
+                                        input#vacancyName.form-control.form-control-lg(type='text' name='vacancyName' required value=onePosition[0].positionName disabled=true)
+
+                                        label.form-label.fr(for='vacancyName') 工作崗位名稱
+                                        .invalid-feedback 
+                                            p.small 請輸入工作崗位名稱。
+
+                            .row
+                                .col-md-10.mb-4
+                                    .form-outline
+                                        input#fields.form-control.form-control-lg(name='fields' disabled required value=" ")
+                                        label.form-label(for='fields') 請選擇工作性質
+                                        .invalid-feedback
+                                            p.small 請選擇工作性質。
+                                .col-md-2.mb-4 
+                                    .form 
+                                        button.btn.btn-success.btn-lg.btn-block(id='select-fields' type='button' data-toggle="modal", data-target="#exampleModal" disabled=true) 選擇
+                            
+                            .row
+                                .col-md-4.mb-4
+                                    .form                            
+                                        select#employment-type.form-select.form-select-lg(type='select' name='employment-type' required disabled=true)
+                                            option.fr(value='' disabled='' selected) 聘用類型*
+                                            option(value='0' selected=(onePosition[0].employment_type == '0')) 合約制
+                                            option(value='1' selected=(onePosition[0].employment_type == '1')) 長工
+                                        .invalid-feedback 
+                                            p.small 請選擇聘用類型。
+
+                                .col-md-4.mb-4
+                                    .form                            
+                                        select#employment.form-select.form-select-lg(type='select' name='employment' required disabled=true)
+                                            option.fr(value='' disabled='' selected) 聘用模式*
+                                            option(value='0' selected=(onePosition[0].employMode == '0')) 全職
+                                            option(value='1' selected=(onePosition[0].employMode == '1')) 兼職
+                                        .invalid-feedback 
+                                            p.small 請選擇您的聘用模式。
+
+                                .col-md-4.mb-4
+                                    .form                            
+                                        select#salary.form-select.form-select-lg(type='select' name='salary' required disabled=true)
+                                            option.fr(value='' disabled='' selected) 薪金*
+                                            option(value='<9999' selected=(onePosition[0].salary == '<9999')) <9999
+                                            - var i = 10000;
+                                                option(value=i+' - '+(i+4999) selected =(onePosition[0].salary == (value=i+' - '+(i+4999))) )=i+' - '+(i+4999)
+                                                - i=i+5000
+                                        .invalid-feedback 
+                                            p.small 請選擇薪金。　
+
+                            // details
+                            .row
+                                .col-md-12.mb-4
+                                    .form-outline 
+                                        textarea#details.form-control.form-control-lg(name='details' required disabled=true)=onePosition[0].text
+                                        label.form-label.fr(for='details') 詳情
+                                        .invalid-feedback 
+                                            p.small 請輸入詳情。
+
+                            //required skills
+                            .row
+                                .col-md-12.mb-4
+                                    .form-outline 
+                                        textarea#skills.form-control.form-control-lg(name='skills' required disabled=true)=onePosition[0].skill_text
+                                        label.form-label.fr(for='skills') 所需技能
+                                        .invalid-feedback 
+                                            p.small 請輸入所需技能。
+                            
+                            // required education level and years of experience
+                            .row 
+                                .col-md-3.mb-4
+                                    .form-outline
+                                        input#cert.form-control.form-control-lg(name='cert' disabled=true value=onePosition[0].cert)
+                                        label.form-label(for='cert') 牌照要求
+                                        .invalid-feedback 
+                                            p.small 請輸入牌照要求。
+                                .col-md-3.mb-4
+                                    .form                            
+                                        select#education.form-select.form-select-lg(type='select' name='education' required disabled=true)
+                                            option.fr(value='' disabled='') 學歷要求*
+                                            option(value='0' selected=(onePosition[0].education[0] == '0')) 中學畢業
+                                            option(value='1' selected=(onePosition[0].education[0] == '1')) 大學本科畢業
+                                            option(value='2' selected=(onePosition[0].education[0] == '2')) 碩士畢業
+                                            option(value='3' selected=(onePosition[0].education[0] == '3')) 博士或更高學歷
+                                        .invalid-feedback 
+                                            p.small 請選擇學歷要求。
+                                .col-md-3.mb-4
+                                    .form-outline
+                                        input#low-year.form-control.form-control-lg(name='low-year' required disabled=true value=onePosition[0].experience)
+                                        label.form-label.fr(for='low-uear') 最低行業年資要求
+                                        .invalid-feedback 
+                                            p.small 請輸入最低行業年資要求。
+
+                                .col-md-3.mb-4
+                                    .form-outline
+                                        input#opt-year.form-control.form-control-lg(name='opt-year' disabled=true value=onePosition[0].opt_year)
+                                        label.form-label(for='opt-year') 理想行業年資要求
+                                        .invalid-feedback 
+                                            p.small 請輸入理想行業年資要求。
+
+                            .row
+                                .col-md-10.mb-4
+                                    .form-outline
+                                        input#major.form-control.form-control-lg(name='major' disabled required value=" ")
+                                        label.form-label(for='major') 請選擇學科要求
+                                        .invalid-feedback
+                                            p.small 請選擇學科要求。
+                                .col-md-2.mb-4 
+                                    .form 
+                                        button.btn.btn-success.btn-lg.btn-block(id='select-fields' type='button' data-toggle="modal", data-target="#exampleModal2" disabled=true) 選擇
+ 
+                            
+                            // opportunities
+                            .row
+                                .col-md-12.mb-4
+                                    .form-outline 
+                                        textarea#opp.form-control.form-control-lg(name='opp' required disabled=true)=onePosition[0].opportunity
+                                        label.form-label.fr(for='opp') 行業要求與晉升機會
+                                        .invalid-feedback 
+                                            p.small 請輸入行業要求與晉升機會。
+                            
+                            .row#nojobad
+                                .col-md-9.mb-4
+                                    input#jobad.form-control.form-control-lg(type='file' name='jobad' accept="application/pdf")
+                                    .invalid-feedback 
+                                            p.small 請上傳招聘廣告。
+                                .col-md-3.mb-4 
+                                    button.btn.btn-primary.btn-lg.btn-block(id='upload' type='button') 上傳招聘廣告 
+
+                            .row#yesjobad
+                                .col-md-2.mb-4.mt-2
+                                    p 招聘廣告
+                                .col-md-5.mb-4
+                                    a.btn.btn-link.btn-lg.btn-block(href="/upload/view/vac/"+onePosition[0]._id target="_blank") 查看
+                                .col-md-5.mb-4 
+                                    button.btn.btn-dark.btn-lg.btn-block(type='button', data-toggle="modal", data-target="#exampleModal4") 移除
+
+                            hr.mt-0
+
+                            .text-center.pt-1.mb-5.pb-1
+                                button.btn.btn-primary.btn-lg.btn-block(id='edit' type='submit' style='display:none') 修改
+                                .row#2btns
+                                    .col-md-6.mb-2.px-1
+                                        button.btn.btn-light.btn-lg.btn-block(id='modify' type='button') 編輯
+                                    .col-md-6.mb-2.px-1
+                                        button.btn.btn-danger.btn-lg.btn-block(id='pd', data-toggle="modal", data-target="#exampleModal3" type="button") 刪除
+
+                                a.text-muted(href='/') 返回
+
+        
+
+
+    #exampleModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true')
+        .modal-dialog.modal-lg(role='document')
+            .modal-content
+                .modal-header
+                    h5#exampleModalLabel.modal-title 請選擇工作性質
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                    span(aria-hidden='true') &times;
+                .modal-body
+                    .row
+                        .col-md-6
+                            for field of fields1
+                                .form-check
+                                    input.form-check-input.select-fields(id="select::"+field type='checkbox' value=field checked=(onePosition[0].jobNature.includes(field)))
+                                    label.form-check-label(for="select::"+field)=field
+                        .col-md-6
+                            for field of fields2
+                                .form-check
+                                    input.form-check-input.select-fields(id="select::"+field type='checkbox' value=field checked=(onePosition[0].jobNature.includes(field)))
+                                    label.form-check-label(for="select::"+field)=field 
+        
+
+    #exampleModal2.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel2' aria-hidden='true')
+        .modal-dialog.modal-lg(role='document')
+            .modal-content
+                .modal-header
+                    h5#exampleModalLabel2.modal-title 請選擇學科要求
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                    span(aria-hidden='true') &times;
+                .modal-body
+                    .row
+                        .col-md-6
+                            for field of study1
+                                .form-check
+                                    input.form-check-input.select-fields2(id="select2::"+field type='checkbox' value=field checked=(onePosition[0].major.includes(field)))
+                                    label.form-check-label(for="select2::"+field)=field
+                        .col-md-6
+                            for field of study2
+                                .form-check
+                                    input.form-check-input.select-fields2(id="select2::"+field type='checkbox' value=field checked=(onePosition[0].major.includes(field)))
+                                    label.form-check-label(for="select2::"+field)=field
+    
+    #exampleModal3.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel3' aria-hidden='true')
+            .modal-dialog(role='document')
+                .modal-content
+                    .modal-header
+                        h5#exampleModalLabel3.modal-title 確認操作
+                        button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') &times;
+                    .modal-body
+                        p(id='modaltext') 您確定要刪除#{onePosition[0].positionName}的職位空缺嗎？
+                    .modal-footer
+                        button.btn.btn-secondary(type='button' data-dismiss='modal') 取消
+                        button.btn.btn-danger(id='delete', data-dismiss='modal') 刪除
+
+    #exampleModal4.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel4' aria-hidden='true')
+            .modal-dialog(role='document')
+                .modal-content
+                    .modal-header
+                        h5#exampleModalLabel4.modal-title 確認操作
+                        button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') &times;
+                    .modal-body
+                        p(id='modaltext') 您確定要移除招聘廣告嗎？
+                    .modal-footer
+                        button.btn.btn-secondary(type='button' data-dismiss='modal') 取消
+                        button.btn.btn-danger(id='deletejobad', data-dismiss='modal') 移除
+        
+    style. 
+        .fr:after {
+            content:"*";
+            color: red;
+        }
+                            
+                            
+
+block scrpts
+    script(src='https://unpkg.com/axios@0.24.0/dist/axios.min.js')
+    script.
+        (() => {
+        'use strict';
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation');
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms).forEach((form) => {
+            form.addEventListener('submit', (event) => {
+                //- console.log(event);
+                form.checkValidity();
+                event.preventDefault();
+                event.stopPropagation();
+                form.classList.add('was-validated');
+                
+            }, false);
+        });
+        })();
+
+        var nature_selected = [], major_selected = [], position_data = {};
+
+        $(document).ready(function(){
+            position_data = !{JSON.stringify(onePosition)};
+            position_data = position_data[0];
+            nature_selected = position_data.jobNature;
+            $('#fields').val(nature_selected.join('、'));
+            major_selected = position_data.major;
+            $('#major').val(major_selected.join('、'));
+
+            if(position_data.file!= null){
+                $('#nojobad').hide();
+            }else{
+                $('#yesjobad').hide();
+            }
+        });
+
+        $('#modify').click(()=>{
+            $('#2btns').hide();
+            $('#edit').show();
+            var disabledFields = ['fields', 'major'];
+            $('#form input, #form select, #form textarea, #form button').each(
+                function(index){  
+                    var input = $(this);
+                    if(!disabledFields.includes(input.attr('id')))
+                        input.prop('disabled', false);
+                }
+            );
+            window.scrollTo({top: 0});
+        });
+
+        $('#delete').click(()=>{
+            postData("/comp/delete-position/"+position_data._id, {}, "DELETE").then(data=>{
+                if(data.status == "error"){
+                    alert("刪除職位空缺時出現未知錯誤！");
+                }else if(data.status == "ok"){
+                    window.location.replace("/comp");
+                }
+            })
+        });
+
+        $('#upload').click(()=>{
+            var jobad = $('#jobad')[0].files[0];
+            if(jobad){
+                if(jobad.size >= 500000){
+                    $('#suc').hide();
+                    $('#suc2').hide();
+                    $('#err3').html("文件大小不能大於0.5MB");
+                    $('#err3').show();
+                    $('#err1').hide();
+                    $('#err2').hide();
+                    $('#err4').hide();
+                    $('#suc3').hide();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }else{
+                    let formData = new FormData();
+                    formData.set('file', jobad);
+                    axios.post("/upload/comp/"+position_data._id, formData).then((response)=>{
+                        if(response.data.status == "ok"){
+                            $('#suc').hide();
+                            $('#suc2').show();
+                            $('#err2').hide();
+                            $('#err1').hide();
+                            $('#err3').hide();
+                            $('#err4').hide();
+                            $('#suc3').hide();
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            $('#nojobad').hide();
+                            $('#yesjobad').show();
+                        }else{
+                            $('#suc').hide();
+                            $('#suc2').hide();
+                            $('#err3').html(response.data.err_msg);
+                            $('#err3').show();
+                            $('#err1').hide();
+                            $('#err2').hide();
+                            $('#err4').hide();
+                            $('#suc3').hide();
+                        }
+                    })
+                }
+            }else{
+                $('#suc').hide();
+                $('#suc2').hide();
+                $('#err3').html("請選擇pdf文件");
+                $('#err3').show();
+                $('#err1').hide();
+                $('#err2').hide();
+                $('#err4').hide();
+                $('#suc3').hide();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+
+        $('#deletejobad').click(()=>{
+            postData("/upload/delete/vac/"+position_data._id, 'POST').then(data=>{
+                if(data.status=="ok"){
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    $('#suc').hide();
+                    $('#suc2').hide();
+                    $('#suc3').show();
+                    $('#err3').hide();
+                    $('#err1').hide();
+                    $('#err2').hide();
+                    $('#err4').hide();
+                    $('#nojobad').show();
+                    $('#yesjobad').hide();
+                }else{
+                    $('#suc').hide();
+                    $('#suc2').hide();
+                    $('#suc3').hide();
+                    $('#err3').hide();
+                    $('#err1').hide();
+                    $('#err2').hide();
+                    $('#err4').show();
+                }
+            })
+        })
+
+
+        function handleChange(event){
+            var sd = this.id.split('::')[1];
+            if(nature_selected.includes(sd)){
+                nature_selected = nature_selected.filter(obj=>{
+                    return obj != sd;
+                });
+            }else
+                nature_selected.push(this.id.split('::')[1]);
+            $('#fields').val(nature_selected.join('、'));
+        }
+
+        function handleChange2(event){
+            var sd = this.id.split('::')[1];
+            if(major_selected.includes(sd)){
+                major_selected = major_selected.filter(obj=>{
+                    return obj != sd;
+                });
+            }else
+                major_selected.push(this.id.split('::')[1]);
+            $('#major').val(major_selected.join('、'));
+        }
+
+        $(document).on('change', '.select-fields', handleChange);
+        $(document).on('change', '.select-fields2', handleChange2);
+
+
+        //- async function postData(url = '', data = {}, method="POST") {
+        //-     const response = await fetch(url, {
+        //-         method: method,
+        //-         headers: {
+        //-             'Content-Type': 'application/json',
+        //-         },
+        //-         body: JSON.stringify(data) // body data type must match "Content-Type" header
+        //-     });
+        //-     return response.json(); // parses JSON response into native JavaScript objects
+        //- }
+
+        var data = {};
+        document.getElementById("edit").addEventListener("click", function() {
+            //- console.log(nature_selected);
+            //- console.log(major_selected);
+            if(nature_selected.length == 0){
+                $('#suc').hide();
+                $('#suc2').hide();
+                $('#err1').show();
+                $('#err2').hide();
+                $('#err3').hide();
+                $('#err4').hide();
+                $('#suc3').hide();
+            }else if(major_selected.length == 0){
+                $('#suc').hide();
+                $('#suc2').hide();
+                $('#err2').show();
+                $('#err1').hide();
+                $('#err3').hide();
+                $('#err4').hide();
+                $('#suc3').hide();
+            }else{
+                $('#suc').hide();
+                $('#suc2').hide();
+                $('#err1').hide();
+                $('#err2').hide();
+                $('#err3').hide();
+                $('#err4').hide();
+                $('#suc3').hide();
+                var valid = true;
+                data = {
+                    positionName: $('#vacancyName').val(),
+                    jobNature: $('#fields').val(),
+                    employMode: $('#employment').val(),
+                    salary: $('#salary').val(),
+                    skill_text: $('#skills').val(),
+                    education: $('#education').val(),
+                    text: $('#details').val(),
+                    experience: $('#low-year').val(),
+                    cert: $('#cert').val(),
+                    employment_type: $('#employment-type').val(),
+                    opt_year: $('#opt-year').val(),
+                    major: $('#major').val(),
+                    opportunity: $('#opp').val(),
+                };
+
+                var optional_fields = ['cert', 'opt_year'];
+                Object.keys(data).forEach(function(key) {
+                    if(!optional_fields.includes(key))
+                        valid &= !(data[key] == '' || data[key] == undefined);
+                })
+                console.log(data);
+
+                if(valid){
+                    postData('/comp/edit-position/'+position_data._id, data, 'POST')
+                    .then(data => {
+                        if(data.status == "ok"){
+                            $('#suc').show();
+                            $('#suc2').hide();
+                            $('#err1').hide();
+                            $('#err2').hide();
+                            $('#err3').hide();
+                            $('#err4').hide();
+                            $('#suc3').hide();
+                            // redirect to main page after succuessful registration
+                            $('#edit').prop('disabled', true);
+                            $('#edit').attr('class', 'btn btn-success btn-lg btn-block');
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            setTimeout(()=>{window.location.replace('/');}, 5000);
+                        }
+                        else{
+                            $('#suc').hide();
+                            $('#suc2').hide();
+                            $('#err3').html(data.err_msg);
+                            $('#err3').show();
+                            $('#err1').hide();
+                            $('#err2').hide();
+                            $('#err4').hide();
+                            $('#suc3').hide();
+                        }
+                    });
+                    
+                }
+            }
+        });

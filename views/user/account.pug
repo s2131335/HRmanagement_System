@@ -1,0 +1,102 @@
+extends ../public/ss
+
+block content
+    form.vh-100.needs-validation(novalidate)
+        .container.py-5.h-100
+            .row.d-flex.justify-content-center.align-items-center.h-100
+                .col-12.col-md-8.col-lg-6.col-xl-5
+
+                    .alert.alert-danger.fade.show(id='err1' style='display:none') 發生未知錯誤！
+                    .alert.alert-danger.fade.show(id='err2' style='display:none') 密碼不匹配！
+                    .alert.alert-success.fade.show(id='suc' style='display:none') 密碼已重置！
+
+                    .card(style='border-radius: 1rem;')
+                        .card-body.p-5.text-center
+
+                            h3.mb-5 重設密碼
+
+                            .form-outline.mb-4
+                                input#old-password.form-control.form-control-lg(type='password' name='password' required)
+                                label.form-label(for='old-password') 舊密碼
+                                .invalid-feedback
+                                    p.small 請輸入您的舊密碼
+
+                            .form-outline.mb-4
+                                input#password.form-control.form-control-lg(type='password' name='password' required)
+                                label.form-label(for='password') 密碼
+                                .invalid-feedback 
+                                    p.small 請輸入您的密碼
+
+                            .form-outline.mb-4
+                                input#confirm-password.form-control.form-control-lg(type='password' name='confirm-password' required)
+                                label.form-label(for='confirm-password') 確認密碼
+                                .invalid-feedback 
+                                    p.small 請輸入確認您的密碼
+                           
+                            button.btn.btn-primary.btn-lg.btn-block(id='reset') 重設
+                            div
+                                a(href='/') 返回
+
+  
+
+    script.
+        (() => {
+        'use strict';
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation');
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms).forEach((form) => {
+            form.addEventListener('submit', (event) => {
+                form.checkValidity()
+                event.preventDefault();
+                event.stopPropagation();
+                form.classList.add('was-validated');
+            }, false);
+        });
+        })();
+
+        async function postData(url = '', data = {}) {
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data) // body data type must match "Content-Type" header
+            });
+            return response.json(); // parses JSON response into native JavaScript objects
+        }
+
+        var data = {};
+        document.getElementById("reset").addEventListener("click", function() {
+            if ($("#password").val() != '' && $("#password").val() == $('#confirm-password').val() && $("#old-password").val() != '') {
+                data = {
+                    "username": "#{username}", 
+                    "password": $('#old-password').val(),
+                    "newpassword": $('#password').val(),
+                    "role": "#{role}"
+                };
+                postData('/helper/reset-password', data)
+                .then(data => {
+                    if(data.status == "ok"){
+                        $('#err1').hide();
+                        $('#err2').hide();
+                        $('#suc').show();
+                    }else{
+                        $('#err2').hide();
+                        $('#err1').show();
+                        $('#suc').hide();
+                    }
+                });
+            }else if ($("#password").val() != $("#confirm-password").val()){
+                $('#suc').hide();
+                $("#err2").show();
+                $('#err1').hide();
+            }else{
+                $('#suc').hide();
+                $("#err2").hide();
+                $('#err1').hide(); 
+            }
+        });
+

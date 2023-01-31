@@ -1,0 +1,483 @@
+extends ../public/ss 
+
+block content
+    //- #form.vh-100(style='background-color: #6D72C3;')
+    form.vh-100.needs-validation(novalidate)
+        .container.py-5.h-100
+            .row.d-flex.justify-content-center.align-items-center.h-100
+                .col-12
+                    .alert.alert-success.fade.show(id='suc' style='display:none') 新用戶添加成功，5秒後跳轉到首頁。
+                    .alert.alert-danger.fade.show(id='err1' style='display:none') 電子郵件確認不匹配
+                    //- .alert.alert-danger.fade.show(id='err2' style='display:none') 密碼不匹配
+                    .alert.alert-danger.fade.show(id='err3' style='display:none') 請選擇您感興趣的行業
+                    .alert.alert-danger.fade.show(id='err4' style='display:none') 請選擇pdf文件
+                    .alert.alert-danger.fade.show(id='err5' style='display:none')
+                    .card(style='border-radius: 1rem;')
+                        .card-body.p-5.text-center
+
+                            img(src="/image/logo.png", height='45')
+                            h5.mb-4.mt-2 候選人才註冊
+                            
+                            
+                            // English name
+                            .row
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#firstName.form-control.form-control-lg(type='text' name='firstName' required)
+                                        label.form-label.fr(for='firstName') 英文名字
+                                        .invalid-feedback 
+                                            p.small 請輸入您的英文名字。
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#lastName.form-control.form-control-lg(type='text' name='lastName' required)
+                                        label.form-label.fr(for='lastName') 英文姓氏
+                                        .invalid-feedback 
+                                            p.small 請輸入您的英文姓氏。
+
+                            // title, Chinese name, and gender
+                            .row
+                                .col-md-3.mb-4
+                                    .form
+                                        select#title.form-select.form-select-lg(type='select' name='title' required)
+                                            option.fr(value='' disabled='' selected style='color:red') 稱呼*
+                                            option(value='Mr.') 先生
+                                            option(value='Ms.') 小姐
+                                            option(value='Mrs.') 女士
+                                        .invalid-feedback 
+                                            p.small 請輸入您的稱呼。
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#ChineseName.form-control.form-control-lg(type='text' name='ChineseName' required)
+                                        label.form-label.fr(for='ChineseName') 中文名
+                                        .invalid-feedback 
+                                            p.small 請選擇您的中文名。
+                                .col-md-3.mb-4
+                                    .form
+                                        select#gender.form-select.form-select-lg(type='select' name='gender' required)
+                                            option.fr(value='' disabled='' selected) 性別*
+                                            option(value='M') 男
+                                            option(value='F') 女
+                                        .invalid-feedback 
+                                            p.small 請選擇您的性別。
+
+                            // hkid
+                            .row
+                                .col-md-12.mb-4
+                                    .form-outline
+                                        input#hkid.form-control.form-control-lg(name='hkid' required pattern="^[A-Z]{1,2}[0-9]{6}([0-9]|A)$")
+                                        label.form-label.fr(for='hkid') 身份證號碼
+                                        .invalid-feedback 
+                                            p.small 身份證號碼格式：<1或2個英文字母><7個號碼>
+
+                            // email
+                            .row
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#email.form-control.form-control-lg(type='email' name='email' required)
+                                        label.form-label.fr(for='email') 電郵地址
+                                        .invalid-feedback 
+                                            p.small 請輸入有效的電郵地址。
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#confirm-email.form-control.form-control-lg(type='email' name='confirm-email' required)
+                                        label.form-label.fr(for='confirm-email') 確認電郵地址
+                                        .invalid-feedback 
+                                            p.small 請確認你的電郵地址。
+
+                            //- // password
+                            //- .row 
+                            //-     .col-md-6.mb-4
+                            //-         .form-outline
+                            //-             input#password.form-control.form-control-lg(type='password' name='password' required)
+                            //-             label.form-label.fr(for='password') 密碼
+                            //-             .invalid-feedback 
+                            //-                 p.small 請輸入密碼。
+
+                            //-     .col-md-6.mb-4
+                            //-         .form-outline
+                            //-             input#confirm-password.form-control.form-control-lg(type='password' name='confirm-password' required)
+                            //-             label.form-label.fr(for='confirm-password') 確認密碼
+                            //-             .invalid-feedback 
+                            //-                 p.small 請確認您的密碼。
+
+                            // Marriage
+                            .row 
+                                .col-md-6.mb-4
+                                    .form                            
+                                        select#marriage.form-select.form-select-lg(type='select' name='marriage' required)
+                                            option.fr(value='' disabled='' selected) 婚姻狀況*
+                                            option(value='1') 未婚/喪偶/離婚/分居
+                                            option(value='2') 已婚
+                                        .invalid-feedback 
+                                            p.small 請選擇您的婚姻狀況。
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#spouse-name.form-control.form-control-lg(name='spouse-name')
+                                        label.form-label(for='spouse-name') 配偶姓名
+                                        .invalid-feedback 
+                                            p.small 請輸入您的配偶姓名。
+                            
+                            // spouse info
+                            .row 
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#spouse-id.form-control.form-control-lg(name='spouse-id')
+                                        label.form-label(for='spouse-id') 配偶香港身份證/護照號碼
+                                        .invalid-feedback 
+                                            p.small 請輸入您配偶的香港身份證/護照號碼。
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#spouse-pp-loc.form-control.form-control-lg(name='spouse-pp-loc')
+                                        label.form-label(for='spouse-pp-loc') 護照簽發地點
+                                        .invalid-feedback 
+                                            p.small 請輸入您配偶的護照簽發地點。
+                            
+                            // district
+                            .row
+                                .col-md-12.mb-4
+                                        .form                            
+                                            select#district.form-select.form-select-lg(type='select' name='district' required)
+                                                option.fr(value='' disabled selected) 地區*
+                                                - var n = 1;
+                                                for district of districts
+                                                    option(value=n++)=district
+                                            .invalid-feedback 
+                                                p.small 請選擇您所在的地區.
+                            
+                            //address line
+                            .row
+                                .col-md-12.mb-4
+                                    .form-outline 
+                                        textarea#address.form-control.form-control-lg(name='address' required)
+                                        label.form-label.fr(for='address') 地址欄
+                                        .invalid-feedback 
+                                            p.small 請輸入您的地址。
+                            //mailing address
+                            .row
+                                .col-md-12.mb-4
+                                    .form-outline 
+                                        textarea#mailing.form-control.form-control-lg(name='mailing')
+                                        label.form-label(for='mailing') 郵寄地址（若地址不同）
+                                        .invalid-feedback 
+                                            p.small 請輸入您的郵寄地址。
+                            
+                            // education
+                            .row 
+                                .col-md-6.mb-4
+                                    .form                            
+                                        select#education.form-select.form-select-lg(type='select' name='education' required)
+                                            option.fr(value='' disabled='' selected) 教育程度*
+                                            option(value='0') 中學畢業
+                                            option(value='1') 大學畢業
+                                            option(value='2') 碩士畢業
+                                            option(value='3') 博士或更高學歷
+                                        .invalid-feedback 
+                                            p.small 請選擇您的教育程度。
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#institution-name.form-control.form-control-lg(name='institution-name' required)
+                                        label.form-label.fr(for='institution-name') 院校名稱
+                                        .invalid-feedback 
+                                            p.small 您獲得最高教育水平的院校名稱。
+                            // education info
+                            .row 
+                                .col-md-4.mb-4
+                                    .form                            
+                                        select#study.form-select.form-select-lg(type='select' name='study' required)
+                                            option.fr(value='' disabled='' selected) 學科分類*
+                                            - var n = 1;
+                                            for area of study 
+                                                option(value=area)=area
+                                        .invalid-feedback 
+                                            p.small 請選擇您的學科分類。
+                                .col-md-4.mb-4
+                                    .form-outline
+                                        input#degree-name.form-control.form-control-lg(name='degree-name' required)
+                                        label.form-label.fr(for='degree-name') 學位名稱
+                                        .invalid-feedback 
+                                            p.small 請輸入您的學位名稱。
+                                .col-md-4.mb-4
+                                    .form-outline
+                                        input#gpa.form-control.form-control-lg(name='gpa')
+                                        label.form-label(for='gpa') GPA (x/4)
+                                        .invalid-feedback 
+                                            p.small 請輸入您的GPA。
+                            
+                            .row
+                                .col-md-10.mb-4
+                                    .form-outline
+                                        input#fields.form-control.form-control-lg(name='fields' disabled required value=" ")
+                                        label.form-label(for='fields') 請選擇您感興趣的行業。
+                                        .invalid-feedback
+                                            p.small 請選擇您感興趣的行業。
+                                .col-md-2.mb4 
+                                    .form 
+                                        button.btn.btn-success.btn-lg.btn-block(id='select-fields' type='button' data-toggle="modal", data-target="#exampleModal") 選擇
+                            
+                            //skill text
+                            .row
+                                .col-md-12.mb-4
+                                    .form-outline 
+                                        textarea#skill_text.form-control.form-control-lg(name='skill_text')
+                                        label.form-label(for='skill_text') 技能
+                                        .invalid-feedback 
+                                            p.small 請輸入您的技能。
+                            // salary
+                            .row
+                                .col-md-4.mb-4
+                                    .form                            
+                                        select#salary-select.form-select.form-select-lg(type='select' name='salary-select' required)
+                                            option.fr(value='' disabled='' selected) 要求月薪*
+                                            option(value='<9999') <9999
+                                            - var i = 10000;
+                                            while i < 100000
+                                                option(value=i+' - '+(i+4999))=i+' - '+(i+4999)
+                                                - i=i+5000
+                                        .invalid-feedback 
+                                            p.small 請選擇您的要求月薪。　
+
+                                .col-md-4.mb-4
+                                    .form-outline
+                                        input#salary-input.form-control.form-control-lg(name='salary-input')
+                                        label.form-label(for='salary-input') 要求月薪 (自選)
+
+                                .col-md-4.mb-4
+                                    .form                            
+                                        select#employment.form-select.form-select-lg(type='select' name='employment' required)
+                                            option.fr(value='' disabled='' selected) 聘用模式*
+                                            option(value='0') 全職
+                                            option(value='1') 兼職
+                                        .invalid-feedback 
+                                            p.small 請選擇您的聘用模式。
+
+
+                            .row 
+                                .col-md-12.mb-4
+                                    label.form-label.fr(for='resume') 簡歷
+                                    input#resume.form-control.form-control-lg(type='file' name='resume' accept="application/pdf")
+                                    .invalid-feedback 
+                                            p.small 請上傳您的簡歷。
+
+                            .text-center.pt-1.mb-5.pb-1
+                                button.btn.btn-primary.btn-lg.btn-block(id='register' type='submit') 註冊
+                                a.text-muted(href='/') 返回
+
+                        
+
+    #exampleModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true')
+        .modal-dialog.modal-lg(role='document')
+            .modal-content
+                .modal-header
+                    h5#exampleModalLabel.modal-title 請選擇您感興趣的行業
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                    span(aria-hidden='true') &times;
+                .modal-body
+                    .row
+                        .col-md-6
+                            for field of fields1
+                                .form-check
+                                    input.form-check-input.select-fields(id="select::"+field type='checkbox' value=field)
+                                    label.form-check-label(for="select-"+field)=field
+                        .col-md-6
+                            for field of fields2
+                                .form-check
+                                    input.form-check-input.select-fields(id="select::"+field type='checkbox' value=field)
+                                    label.form-check-label(for="select-"+field)=field
+
+        
+    style. 
+        .fr:after {
+            content:"*";
+            color: red;
+        }
+                            
+                            
+
+block scrpts 
+    script(src='https://unpkg.com/axios@0.24.0/dist/axios.min.js')
+    script.
+        var selected = [];
+        //- $('#fields').prop('disabled', false);
+        
+        function handleChange(event){
+            var sd = this.id.split('::')[1];
+            if(selected.includes(sd)){
+                selected = selected.filter(obj=>{
+                    return obj != sd;
+                });
+            }else
+                selected.push(this.id.split('::')[1]);
+            $('#fields').val(selected.join('、'));
+        }
+
+        $(document).on('change', '.select-fields', handleChange);
+
+        (() => {
+        'use strict';
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation');
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms).forEach((form) => {
+            form.addEventListener('submit', (event) => {
+                //- console.log(event);
+                form.checkValidity();
+                event.preventDefault();
+                event.stopPropagation();
+                form.classList.add('was-validated');
+
+            }, false);
+        });
+        })();
+
+        async function postData(url = '', data = {}) {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data) // body data type must match "Content-Type" header
+            });
+            return response.json(); // parses JSON response into native JavaScript objects
+        }
+
+        var data = {};
+        document.getElementById("register").addEventListener("click", function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            $('#suc').hide();
+            $('#err1').hide();
+            $('#err2').hide();
+            $('#err3').hide();
+            $('#err4').hide();
+            $('#err5').hide();
+            if($("#email").val() != $('#confirm-email').val() ){
+                $('#suc').hide();
+                $('#err1').show();
+                $('#err3').hide();
+                $('#err4').hide();
+                $('#err5').hide();
+            }else if ($("#password").val() != $('#confirm-password').val()){
+                $('#suc').hide();
+                $('#err1').hide();
+                $('#err2').show();
+                $('#err3').hide();
+                $('#err4').hide();
+                $('#err5').hide();
+            }else if ($("#email").val() != '' && $('#password').val() != '') {
+                var valid = true;
+                data = {
+                    first_name: $('#firstName').val(),
+                    last_name: $('#lastName').val(),
+                    chinese_name: $('#ChineseName').val(),
+                    title: $('#title').val(),
+                    gender: $('#gender').val(),
+                    email: $('#email').val(),
+                    password: "nopassword123",
+                    marriage: $('#marriage').val(),
+                    spouse_name: $('#spouse-name').val(),
+                    spouse_id: $('#spouse-id').val(),
+                    spouse_pp_loc: $('#spouse-pp-loc').val(),
+                    district: $('#district').val(),
+                    address: $('#address').val(),
+                    mailing_address: $('#mailing-address').val(),
+                    education: $('#education').val(),
+                    institution_name: $("#institution-name").val(),
+                    study: $("#study").val(),
+                    degree: $("#degree-name").val(),
+                    fields: selected,
+                    salary_range: $("#salary-select").val(),
+                    salary_optional: $("#salary-input").val(),
+                    employment: $("#employment").val(),
+                    gpa: $('#gpa').val(),
+                    skill_text: $("#skill_text").val(),
+                    intereseted_industry: selected,
+                    hkid: $('#hkid').val(),
+                };
+
+                var optional_fields = ['spouse_name', 'spouse_id', 'spouse_pp_loc', 'mailing_address', 'mail', 'salary_optional', 'gpa', 'skill_text'];
+                Object.keys(data).forEach(function(key) {
+                    if(!optional_fields.includes(key))
+                        valid &= !(data[key] == '' || data[key] == undefined);
+                })
+
+                if(selected.length == 0){
+                    valid = false;
+                    $('#suc').hide();
+                    $('#err1').hide();
+                    $('#err3').show();
+                    $('#err4').hide();
+                    $('#err5').hide();
+                }else{
+                    $('#err3').hide(); 
+                }
+
+                if(valid){
+                    const regex = new RegExp("^[A-Z]{1,2}[0-9]{6}([0-9]|A)$");
+                    if(!regex.test(data?.hkid)){
+                        valid = false;
+                    }
+                }
+
+
+                if(valid){
+                    var cv = $('#resume')[0].files[0];
+                    if(cv){
+                        if(cv.size >= 500000){
+                            $('#suc').hide();
+                            $('#err5').html("文件大小不能大於0.5MB");
+                            $('#err5').show();
+                            $('#err1').hide();
+                            $('#err3').hide();
+                            $('#err4').hide();
+                            valid = false;
+                        }
+                        else{
+                            postData('/candidate/register', data)
+                            .then(data => {
+                                if(data.status == "ok"){
+                                    let formData = new FormData();
+                                    formData.set('file', cv);
+                                    axios.post("/upload/can/"+data.cid, formData).then((response)=>{
+                                        if(response.data.status == "ok"){
+                                            $('#suc').show();
+                                            $('#err1').hide();
+                                            $('#err3').hide();
+                                            $('#err4').hide();
+                                            $('#err5').hide();
+                                            // redirect to main page after succuessful registration
+                                            $('#register').prop('disabled', true);
+                                            $('#register').attr('class', 'btn btn-success btn-lg btn-block');
+                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                            setTimeout(()=>{window.location.replace('/');},5000);
+                                        }else{
+                                            $('#suc').hide();
+                                            $('#err5').html(response.data.err_msg);
+                                            $('#err5').show();
+                                            $('#err1').hide();
+                                            $('#err3').hide();
+                                            $('#err4').hide();
+                                        }
+                                    })
+                                }
+                                else{
+                                    $('#suc').hide();
+                                    $('#err5').html(data.err_msg);
+                                    $('#err1').hide();
+                                    $('#err3').hide();
+                                    $('#err4').hide();
+                                    $('#err5').show();
+                                }
+                            });
+                        }
+                    }else{
+                        $('#suc').hide();
+                        $('#err4').show();
+                        $('#err1').hide();
+                        $('#err3').hide();
+                        $('#err5').hide();
+                    }
+
+                }
+            }
+        });

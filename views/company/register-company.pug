@@ -1,0 +1,279 @@
+extends ../public/ss
+
+
+block content
+    //- #form.vh-100(style='background-color: #6D72C3;')
+    form.vh-100.needs-validation(novalidate)
+        .container.py-5.h-100
+            .row.d-flex.justify-content-center.align-items-center.h-100
+                .col-12
+                    .alert.alert-success.fade.show(id='suc' style='display:none') 新用戶添加成功，5秒後跳轉到首頁。
+                    .alert.alert-danger.fade.show(id='err1' style='display:none') 電子郵件確認不匹配
+                    .alert.alert-danger.fade.show(id='err2' style='display:none') 密碼不匹配
+                    .alert.alert-danger.fade.show(id='err3' style='display:none')
+                    .card(style='border-radius: 1rem;')
+                        .card-body.p-5.text-center
+                            
+                            img(src="/image/logo.png", height='45')
+                            h5.mb-4.mt-2 本地公司註冊
+
+                            // company name
+                            .row
+                                .col-md-12.mb-4
+                                    .form-outline
+                                        input#companyName.form-control.form-control-lg(type='text' name='companyName' required)
+                                        label.form-label.fr(for='companyName') 公司名稱
+                                        .invalid-feedback 
+                                            p.small 請輸入貴公司的名稱。
+
+                            // nature and district
+                            .row
+                                .col-md-6.mb-4
+                                   .form                            
+                                        select#nature.form-select.form-select-lg(type='select' name='nature' required)
+                                            option.fr(value='' disabled selected) 行業*
+                                            - var n = 1;
+                                            for nature of businessNature
+                                                option(value=n++)=nature
+                                        .invalid-feedback 
+                                            p.small 請選擇貴公司的行業. 
+                                .col-md-6.mb-4
+                                    .form                            
+                                        select#district.form-select.form-select-lg(type='select' name='district' required)
+                                            option.fr(value='' disabled selected) 辦事處地區*
+                                            - var n = 1;
+                                            for district of districts
+                                                option(value=n++)=district
+                                        .invalid-feedback 
+                                            p.small 請選擇貴公司辦事處所在的地區.
+                            
+                            //address line
+                            .row
+                                .col-md-12.mb-4
+                                    .form-outline 
+                                        textarea#address.form-control.form-control-lg(name='address' required)
+                                        label.form-label.fr(for='address') 辦事處地址
+                                        .invalid-feedback 
+                                            p.small 請輸入貴公司辦事處地址。
+
+                            // Marriage
+                            .row 
+                                .col-md-6.mb-4
+                                    .form                            
+                                        select#id.form-select.form-select-lg(type='select' name='id' required)
+                                            option.fr(value='' disabled='' selected) 請選擇*
+                                            option(value='0') 商業登記編號
+                                            option(value='1') 僱主身份證號碼
+                                        .invalid-feedback 
+                                            p.small 請選擇。
+
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#id-input.form-control.form-control-lg(name='id-input' required disabled)
+                                        label.form-label.fr(for='id-input') 商業登記編號/僱主身份證號碼
+                                        .invalid-feedback 
+                                            p#id-input-invalid.small 請輸入商業登記編號/僱主身份證號碼。
+
+                            .row
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#contactPersonnel.form-control.form-control-lg(type='text' name='contactPersonnel' required)
+                                        label.form-label.fr(for='contactPersonnel') 聯絡人
+                                        .invalid-feedback 
+                                            p.small 請輸入貴公司聯絡人。
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#contactNo.form-control.form-control-lg(type='text' name='contactNo' required)
+                                        label.form-label.fr(for='contactNo') 聯絡電話
+                                        .invalid-feedback 
+                                            p.small 請輸入貴公司聯絡電話。
+
+                            // email
+                            .row
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#email.form-control.form-control-lg(type='email' name='email' required)
+                                        label.form-label.fr(for='email') 電郵地址
+                                        .invalid-feedback 
+                                            p.small 請輸入貴公司的電郵地址。
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#confirm-email.form-control.form-control-lg(type='email' name='confirm-email' required)
+                                        label.form-label.fr(for='confirm-email') 確認電郵地址
+                                        .invalid-feedback 
+                                            p.small 請確認貴公司的電郵地址。
+
+                            // password
+                            .row 
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#password.form-control.form-control-lg(type='password' name='password' required)
+                                        label.form-label.fr(for='password') 密碼
+                                        .invalid-feedback 
+                                            p.small 請輸入密碼。
+
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#confirm-password.form-control.form-control-lg(type='password' name='confirm-password' required)
+                                        label.form-label.fr(for='confirm-password') 確認密碼
+                                        .invalid-feedback 
+                                            p.small 請確認貴公司的密碼。
+
+                            .text-center.pt-1.mb-5.pb-1
+                                button.btn.btn-primary.btn-lg.btn-block(id='register' type='submit') 註冊
+                                a.text-muted(href='/') 返回
+
+        
+    style. 
+        .fr:after {
+            content:"*";
+            color: red;
+        }
+                            
+                            
+
+block scrpts 
+    script.
+        var selected = [];
+       
+        
+        function handleChange(event){
+            var sd = this.id.split('::')[1];
+            if(selected.includes(sd)){
+                selected = selected.filter(obj=>{
+                    return obj != sd;
+                });
+            }else
+                selected.push(this.id.split('::')[1]);
+            $('#fields').val(selected.join('、'));
+        }
+
+        $(document).on('change', '.select-fields', handleChange);
+
+        (() => {
+        'use strict';
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation');
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms).forEach((form) => {
+            form.addEventListener('submit', (event) => {
+                //- console.log(event);
+                form.checkValidity();
+                event.preventDefault();
+                event.stopPropagation();
+                form.classList.add('was-validated');
+                
+            }, false);
+        });
+        })();
+
+        //- async function postData(url = '', data = {}) {
+        //-     const response = await fetch(url, {
+        //-         method: 'POST',
+        //-         headers: {
+        //-         'Content-Type': 'application/json'
+        //-         },
+        //-         body: JSON.stringify(data) // body data type must match "Content-Type" header
+        //-     });
+        //-     return response.json(); // parses JSON response into native JavaScript objects
+        //- }
+
+        const idpatterns = ['^((6[A-N|Y]1|699)-)?[0-9]{8}$', '^[A-Z]{1,2}[0-9]{6}([0-9]|A)$']
+
+        $('#id').change(()=>{
+            $('#id-input').prop('disabled', false);
+            var sid = $('#id').val();
+            $('#id-input').attr('pattern', idpatterns[sid]);
+        })
+
+        var data = {};
+        document.getElementById("register").addEventListener("click", function() {
+            $('#suc').hide();
+            $('#err1').hide();
+            $('#err2').hide();
+            $('#err3').hide();
+            if($("#email").val() != $('#confirm-email').val() ){
+                $('#suc').hide();
+                $('#err1').show();
+                $('#err2').hide();
+                $('#err3').hide();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }else if ($("#password").val() != $('#confirm-password').val()){
+                $('#suc').hide();
+                $('#err1').hide();
+                $('#err2').show();
+                $('#err3').hide();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }else if ($("#email").val() != '' && $('#password').val() != '') {
+                var valid = true;
+                data = {
+                    email: $('#email').val(),
+                    password: $('#password').val(),
+                    contactName: $('#contactPersonnel').val(),
+                    companyName: $('#companyName').val(),
+                    phone: $('#contactNo').val(),
+                    registerNumber: '',
+                    HKID: '',
+                    address: $('#address').val(),
+                    industry: $('#nature').val(),
+                    district: $('#district').val(),
+                };
+
+                Object.keys(data).forEach(function(key) {
+                    if(key!='HKID' && key!='registerNumber')
+                        valid &= (data[key]!= '')
+                })
+
+                if($("#id").val() == "0"){
+                    data['registerNumber'] = $('#id-input').val();
+                    valid &= (data['registerNumber']!= '')
+                }else{
+                    data['HKID'] = $('#id-input').val();
+                    valid &= (data['HKID']!= '')
+                }
+
+                if(valid){
+                    const regex = new RegExp(idpatterns[$('#id').val()]);
+                    //- console.log(regex.test($('#id-input').val()));
+                    if(!regex.test($('#id-input').val())){
+                        valid = false;
+                        if($('#id').val() == 0)
+                            $('#id-input-invalid').html('商業登記編號格式：<3個字> - <8個號碼> 或 <8個號碼> ')
+                        else
+                            $('#id-input-invalid').html('身份證號碼格式：<1或2個英文字母><7個號碼>')
+                      
+                    }else{
+                        $('#err3').html('');
+                        $('#err3').hide();
+                    }
+                }
+
+
+
+                if(valid){
+                    postData('/comp/register', data ,'POST')
+                    .then(data => {
+                        if(data.status == "ok"){
+                            $('#suc').show();
+                            $('#err1').hide();
+                            $('#err2').hide();
+                            $('#err3').hide();
+                            // redirect to main page after succuessful registration
+                            $('#register').prop('disabled', true);
+                            $('#register').attr('class', 'btn btn-success btn-lg btn-block');
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            setTimeout(()=>{window.location.replace('/');},5000);
+                        }
+                        else{
+                            $('#suc').hide();
+                            $('#err3').html(data.err_msg);
+                            $('#err1').hide();
+                            $('#err2').hide();
+                            $('#err3').show();
+                        }
+                    });
+                }
+            }
+        });

@@ -1,0 +1,171 @@
+extends ../user/nav
+
+block content
+    .container.pt-4.pb-5
+        .row
+            div.col-6 
+                h3 候選人才
+        hr.my-2
+        table#table.stripe(style='width:100%')
+            thead
+                tr
+                    th(scope='col') 中文名
+                    th(scope='col') 電郵地址
+                    th(scope='col') 要求月薪
+                    th(scope='col') 學歷
+                    th(scope='col') 學科
+                    th(scope='col') 聘用模式
+                    th(scope='col') 資訊
+                    th(scope='col') 操作
+
+    #exampleModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true')
+            .modal-dialog(role='document')
+                .modal-content
+                    .modal-header
+                        h5#exampleModalLabel.modal-title 確認操作
+                        button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') &times;
+                    .modal-body
+                        p(id='modaltext') 您確定要刪除選定的用戶嗎？
+                    .modal-footer
+                        button.btn.btn-secondary(type='button' data-dismiss='modal') 取消
+                        button.btn.btn-danger(id='delete', data-dismiss='modal') 刪除
+
+    #exampleModal5.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true')
+        .modal-dialog.modal-lg(role='document')
+            .modal-content
+                .modal-header
+                    h5#exampleModalLabel.modal-title
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') &times;
+                .modal-body
+                    .container 
+                        table
+                            tr 
+                                td(style="width:40%") 中文名
+                                td#mchinese_name 
+                            tr
+                                td 英文名
+                                td#menglish_name 
+                            tr 
+                                td 性別
+                                td#mgender 
+                            tr 
+                                td 電郵地址
+                                td#memail 
+                            tr 
+                                td 教育程度
+                                td#meducation 
+                            tr 
+                                td 院校名稱
+                                td#minstitution
+                            tr 
+                                td 學位名稱
+                                td#mdegree 
+                            tr 
+                                td 感興趣的行業
+                                td#minterested
+                            tr 
+                                td 要求月薪
+                                td#msalary
+                            tr 
+                                td 簡歷
+                                td
+                                    a#mcv.btn.btn-link.btn-lg.btn-block(target="_blank") 查看
+
+
+block scrpts
+    script.
+        let pagedata = [];
+        function handlePrompt(id, name){
+            $('#modaltext').html("您確定要刪除候選人才<strong>"+name+"</strong>嗎？");
+            $('#delete').click(()=>{
+                postData('/internal/delete-candidate/'+id, {}, "POST").then(data=>{
+                    if(data.status == "ok"){
+                        window.location.reload();
+                    }else(
+                        alert(data.err_msg)
+                    )
+                })
+            })
+        }
+
+        var table = $('#table').dataTable({
+            "dom": '<<t>lip>',
+            "language": {
+                "lengthMenu": "每頁顯示 _MENU_ 條記錄",
+                "zeroRecords": "沒有找到記錄",
+                "info": "顯示第 _PAGE_ 頁，共 _PAGES_ 頁，總共 _TOTAL_ 條目",
+                "infoEmpty": "無可用記錄",
+                "infoFiltered": "（從 _MAX_ 條總記錄中過濾）",
+                "search": "搜索",
+                "paginate": {
+                    "first":      "首頁",
+                    "last":       "尾頁",
+                    "next":       "下頁",
+                    "previous":   "上頁"
+                },
+            },
+            columns: [
+                {data: "chinese_name"},
+                {data: "email"},
+                {data: "salary_range"},
+                {data: "education"},
+                {data: "study"},
+                {data: "employment"},
+                {data: "info"},
+                {data: "action"}
+            ],
+            serverSide: true,
+            processing: true,
+            searching: false,
+            ajax: {
+                "url": "/internal/get-all-candidates/",
+                "type": "GET",
+                "dataSrc": function(da){
+                    pagedata = da.data;
+                    let i = 0;
+                    for(const d of da.data){
+                        if(d.employment == "0"){
+                            d.employment = "全職";
+                        }else{
+                            d.employment = "兼職";
+                        }
+                        if(d.education == "0"){
+                            d.education = "中學畢業";
+                        }else if(d.education == "1"){
+                            d.education = "大學畢業";
+                        }else if(d.education == "2"){
+                            d.education = "碩士畢業";
+                        }else{
+                            d.education = "博士或更高學歷";
+                        }
+
+                        d.action = `
+                        <button class="btn btn-danger btn-rounded btn-sm fw-bold" data-toggle="modal", data-target="#exampleModal", type='button', data-mdb-ripple-color='dark' onclick="handlePrompt('${d._id}', '${d.chinese_name}')">刪除</button>
+                        `;
+                        d.info = `
+                            <button class="btn btn-light btn-rounded btn-sm fw-bold" data-toggle="modal", data-target="#exampleModal5", type='button', data-mdb-ripple-color='dark' onclick='handlePrompt(${i++})'> 
+                                <i class="fas fa-info"></i>
+                            </button>
+                        `
+
+                    }
+                    //- console.log(da);
+                    return da.data;
+                }
+            }
+        });
+
+        function handlePrompt(i){
+            $('#mchinese_name').html(pagedata[i].chinese_name);
+            $('#menglish_name').html(pagedata[i].first_name + " " + pagedata[i].last_name);
+            $('#mgender').html(pagedata[i].gender);
+            $('#memail').html(pagedata[i].email);
+            $('#meducation').html(pagedata[i].education);
+            $('#minstitution').html(pagedata[i].institution_name);
+            $('#mdegree').html(pagedata[i].name_of_degree);
+            $('#minterested').html(pagedata[i].interested_industry.join(" "));
+            $('#msalary').html(pagedata[i].salary_range);
+            $('#mcv').attr('href', "/upload/view/can/"+pagedata[i]._id );
+        }
