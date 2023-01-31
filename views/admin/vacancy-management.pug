@@ -1,0 +1,74 @@
+extends ../user/nav
+
+block content
+    .container.pt-4.pb-5
+        .row
+            div.col-6 
+                h3 職位空缺
+        hr.my-2
+        table#table.stripe.mt-0(style='width:100%')
+            thead
+                tr
+                    th(scope='col') 公司
+                    th(scope='col') 工作崗位名稱
+                    th(scope='col') 工作性質
+                    th(scope='col') 聘用模式
+                    th(scope='col') 薪金
+                    th(scope='col') 學歷要求
+                    th(scope='col') 學科要求
+                    th(scope='col') 年資要求
+                    th(scope='col') 匹配
+
+
+block scrpts
+    script.
+
+        var table = $('#table').dataTable({
+            "dom": '<<t>lip>',
+            "language": {
+                "lengthMenu": "每頁顯示 _MENU_ 條記錄",
+                "zeroRecords": "沒有找到記錄",
+                "info": "顯示第 _PAGE_ 頁，共 _PAGES_ 頁，總共 _TOTAL_ 條目",
+                "infoEmpty": "無可用記錄",
+                "infoFiltered": "（從 _MAX_ 條總記錄中過濾）",
+                "search": "搜索",
+                "paginate": {
+                    "first":      "首頁",
+                    "last":       "尾頁",
+                    "next":       "下頁",
+                    "previous":   "上頁"
+                },
+            },
+            columns:[
+                {data: "companyName"},
+                {data: "positionName"},
+                {data: "jobNature"},
+                {data: "employMode"},
+                {data: "salary"},
+                {data: "education"},
+                {data: "major"},
+                {data: "experience"},
+                {data: "match", sorting: false}
+            ],
+            serverSide: true,
+            processing: true,
+            searching: false,
+            ajax: {
+                "url": "/internal/get-positions/",
+                "type": "GET",
+                "dataSrc": function(da){
+                    for(const d of da.data){
+                        d.companyName = d.companyData.companyName;
+                        if(d.employMode == "0"){
+                            d.employMode = "全職";
+                        }else{
+                            d.employMode = "兼職";
+                        }
+
+                        d.match = '<a type="button" class="btn btn-light btn-floating" href="/internal/vacancy/info/' + d._id + '"><i class="material-icons">person_add</i> </a>';
+                    }
+                    //- console.log(da);
+                    return da.data;
+                }
+            }
+        });

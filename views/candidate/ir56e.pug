@@ -1,0 +1,355 @@
+extends ../public/ss 
+
+block content
+    form.vh-100.needs-validation(novalidate)
+        .container.py-5.h-100
+            .row.d-flex.justify-content-center.align-items-center.h-100
+                .col-12
+                    .alert.alert-success.fade.show(id='suc' style='display:none')  IR56E表格遞交成功。
+                    .alert.alert-danger.fade.show(id='err4' style='display:none') 請選擇pdf文件
+                    .alert.alert-danger.fade.show(id='err5' style='display:none')
+                    //- .alert.alert-danger.fade.show(id='err1' style='display:none') 請輸入您的僱用開始日期
+                    //- .alert.alert-danger.fade.show(id='err2' style='display:none') 請輸入您的每月的固定入息
+                    //- .alert.alert-danger.fade.show(id='err3' style='display:none') 請輸入您每個月的津貼
+                    //- .alert.alert-danger.fade.show(id='err4' style='display:none') 請回答是否有提供居所詳情
+                    //- .alert.alert-danger.fade.show(id='err5' style='display:none') 請輸入居所地址
+                    //- .alert.alert-danger.fade.show(id='err6' style='display:none') 請輸入由僱主付給業主的每月租金
+                    //- .alert.alert-danger.fade.show(id='err7' style='display:none') 請輸入由僱員付給業主的每月租金
+                    //- .alert.alert-danger.fade.show(id='err8' style='display:none') 請輸入由僱主發還給僱員的每月租金
+                    //- .alert.alert-danger.fade.show(id='err9' style='display:none') 請輸入由僱員付給僱主的每月租金
+                    //- .alert.alert-danger.fade.show(id='err10' style='display:none') 請回答僱員的全部或部分入息是否由非香港公司在本港或其他地區支付
+                    //- .alert.alert-danger.fade.show(id='err11' style='display:none') 請輸入該非香港公司名稱
+                    //- .alert.alert-danger.fade.show(id='err12' style='display:none') 請輸入該非香港公司地址
+                    //- .alert.alert-danger.fade.show(id='err13' style='display:none') 請回答僱員是否在受僱於香港工作前，已獲有條件地授予股份認購權，規定他要在香港提供了服務後才可行使這些認購權
+                    .card(style='border-radius: 1rem;')
+                        .card-body.p-5.text-center
+
+                            h3.mb-5 IR56E表格
+                            
+                            // 僱用開始日期
+                            .row
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#date.form-control.form-control-lg(type='date' name='date' required)
+                                        label.form-label.fr(for='date') 僱用開始日期
+                                        .invalid-feedback 
+                                            p.small 請輸入您的僱用開始日期。
+
+                                // 每月的固定入息
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#staticincome.form-control.form-control-lg(type='number' name='staticincome' min="0" step="1" required)
+                                        label.form-label.fr(for='staticincome') 每月的固定入息
+                                        .invalid-feedback 
+                                            p.small 請輸入您的每月的固定入息。
+                            .row
+                                // 每月的津貼
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#incentive.form-control.form-control-lg(type='number' name='incentive' min="0" step="1" required)
+                                        label.form-label.fr(for='incentive') 每個月的津貼
+                                        .invalid-feedback 
+                                            p.small 請輸入您每個月的津貼。
+
+                                .col-md-6.mb-4
+                                    .form-outline
+                                        input#nonfixed-income.form-control.form-control-lg(type='number' name='incentive' min="0" step="1" required)
+                                        label.form-label.fr(for='nonfixed-income') 非固定的入息
+                                        .invalid-feedback 
+                                            p.small 請輸入您非固定的入息。
+
+                            //居所詳情
+                            .row
+                                p.text-left 是否有提供居所詳情
+                                .col-md-12.mb-4
+                                    .form                            
+                                        select#addressinfo.form-select.form-select-lg(type='select' name='addressinfo' required)
+                                            //- option.fr(value='' disabled='' selected)
+                                            option(value='0' id='address0' selected) 否
+                                            option(value='1' id='address1') 是
+                                        .invalid-feedback 
+                                            p.small 請選擇答案。
+                            
+                            #extrainfoarea1
+                                .row
+                                    .col-md-6.mb-4
+                                        .form                            
+                                            select#com-type.form-select.form-select-lg(type='select' name='addressinfo' required)
+                                                option.fr(value='' disabled='' selected) 居所類型
+                                                option(value='獨立屋' ) 獨立屋
+                                                option(value='樓宇單位' ) 樓宇單位
+                                                option(value='服務式住宅' ) 服務式住宅
+                                                option(value='其他' ) 其他
+                                            .invalid-feedback 
+                                                p.small 請選擇居所類型。
+
+                                    .col-md-6.mb-4
+                                        .form-outline
+                                            input#opt-com-type.form-control.form-control-lg(type='text' name='address' disabled)
+                                            label.form-label(for='opt-com-type') 其他居所類型
+                                            .invalid-feedback 
+                                                p.small 請輸入其他居所類型。
+                                    
+                                .row
+                                    .col-md-12.mb-4
+                                        .form-outline
+                                            textarea#address.form-control.form-control-lg(type='text' name='address')
+                                            label.form-label.fr(for='address') 地址
+                                            .invalid-feedback 
+                                                p.small 請輸入地址。
+                            
+                                .row
+                                    .col-md-6.mb-4
+                                        .form-outline
+                                            input#employer2owner.form-control.form-control-lg(type='number' min="0" step="1"  name='address')
+                                            label.form-label.fr(for='address') 由僱主付給業主的每月租金(港元)
+                                            .invalid-feedback 
+                                                p.small 請輸入每月租金。
+
+                                    .col-md-6.mb-4
+                                        .form-outline
+                                            input#employee2owner.form-control.form-control-lg(type='number' min="0" step="1" name='address')
+                                            label.form-label.fr(for='address') 由僱員付給業主的每月租金(港元)
+                                            .invalid-feedback 
+                                                p.small 請輸入每月租金。
+                                .row
+                                    .col-md-6.mb-4
+                                        .form-outline
+                                            input#employer2employee.form-control.form-control-lg(type='number' min="0" step="1" name='address')
+                                            label.form-label.fr(for='address') 由僱主發還給僱員的每月租金(港元) 
+                                            .invalid-feedback 
+                                                p.small 請輸入每月租金。
+                                
+                                    .col-md-6.mb-4
+                                        .form-outline
+                                            input#employee2employer.form-control.form-control-lg(type='number' min="0" step="1" name='address')
+                                            label.form-label.fr(for='address') 由僱員付給僱主的每月租金(港元)
+                                            .invalid-feedback 
+                                                p.small 請輸入每月租金。                                            
+                            //海外入息
+                            .row 
+                                p.text-left 僱員的全部或部分入息是否由非香港公司在本港或其他地區支付
+                                .col-md-12.mb-4
+                                    .form                            
+                                        select#incomeother.form-select.form-select-lg(type='select' name='incomeother' required)
+                                            //- option.fr(value='' disabled='' selected)
+                                            option(value='0' selected) 否
+                                            option(value='1') 是
+                                        .invalid-feedback 
+                                            p.small 請選擇答案。
+
+                            #extrainfoarea2
+                                .row
+                                    .col-md-12.mb-4
+                                        .form-outline
+                                            input#namecom.form-control.form-control-lg(type='text' name='comname')
+                                            label.form-label.fr(for='comname') 該非香港公司名稱
+                                            .invalid-feedback 
+                                                p.small 請輸入該非香港公司名稱。
+                                .row
+                                    .col-md-12.mb-4
+                                        .form-outline
+                                            textarea#addresscom.form-control.form-control-lg(type='text' name='address')
+                                            label.form-label.fr(for='address') 地址
+                                            .invalid-feedback 
+                                                p.small 請輸入地址。
+
+                            // 股份認購權
+                            .row 
+                                p.text-left 僱員是否在受僱於香港工作前，已獲有條件地授予股份認購權，規定他要在香港提供了服務後才可行使這些認購權
+                                .col-md-12.mb-4
+                                    .form                            
+                                        select#shares.form-select.form-select-lg(type='select' name='shares' required)
+                                            //- option.fr(value='' disabled='' selected)
+                                            option(value='0' for='shares' selected) 否
+                                            option(value='1' for='shares') 是
+                                        .invalid-feedback 
+                                            p.small 請選擇答案。
+
+                            #extrainfoarea3
+                                .row
+                                    .col-md-12.mb-4
+                                        label.form-label.fr(for='pdf') 請以附件提供股份認購的類別及可認購的股數、為獲取認購權所付的代價 (如有)、行使認購權時須付的代價、 以及行使認購權時限等詳情。
+                                        input#pdfshares.form-control.form-control-lg(type='file' name='pdf' accept="application/pdf")
+                                        .invalid-feedback 
+                                                p.small 請上傳您的附件。       
+
+                            .text-center.pt-1.mb-5.pb-1
+                                button.btn.btn-primary.btn-lg.btn-block(id='submit' type='submit') 提交
+                                a.text-muted(href='/') 返回
+
+    style. 
+        .fr:after {
+            content:"*";
+            color: red;
+        }
+
+block scrpts
+    script.
+        (() => {
+        'use strict';
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation');
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms).forEach((form) => {
+            form.addEventListener('submit', (event) => {
+                form.checkValidity()
+                event.preventDefault();
+                event.stopPropagation();
+            form.classList.add('was-validated');
+            }, false);
+        });
+        })();
+
+        $(document).ready(function () {
+            $('#extrainfoarea1').hide();
+            $('#extrainfoarea2').hide();
+            $('#extrainfoarea3').hide();
+        })
+        $('#addressinfo').on('change',()=>{
+            if($('#addressinfo').val()==1){
+                $('#extrainfoarea1').show();
+                $('#address').attr("required","");
+                $('#employer2owner').attr("required","");
+                $('#employee2owner').attr("required","");
+                $('#employer2employee').attr("required","");
+                $('#employee2employer').attr("required","");
+                $('#com-type').attr("required","");
+            }else{
+                $('#extrainfoarea1').hide();
+                $('#address').removeAttr("required");
+                $('#employer2owner').removeAttr("required");
+                $('#employee2owner').removeAttr("required");
+                $('#employer2employee').removeAttr("required");
+                $('#employee2employer').removeAttr("required");
+            }
+        })
+        $('#com-type').on('change', ()=>{
+            //- console.log($("#com-type").val());
+            if($("#com-type").val() == "其他"){
+                $("#opt-com-type").prop('disabled', false);
+                $("#opt-com-type").attr("required","");
+            }else{
+                $("#opt-com-type").prop('disabled', true);
+                $("#opt-com-type").removeAttr("required");
+            }
+        })
+        //toggle extra forms for q5
+        $('#incomeother').on('change',()=>{
+            if($('#incomeother').val()==1){
+                $('#extrainfoarea2').show();
+                $('#namecom').attr('required','');
+                $('#addresscom').attr('required','');
+            }else{
+                $('#extrainfoarea2').hide();
+                $('#namecom').removeAttr('required');
+                $('#addresscom').removeAttr('required');
+            }
+        })
+        //toggle extra forms for q6
+
+        $('#shares').on('change',()=>{
+            if($('#shares').val()==1){
+                $('#extrainfoarea3').show();
+                $('#pdfshares').attr('required','');
+            }else{
+                $('#extrainfoarea3').hide();
+                $('#pdfshares').removeAttr('required');
+            }
+        })
+        async function postData(url = '', data = {}) {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data) // body data type must match "Content-Type" header
+            });
+            return response.json(); // parses JSON response into native JavaScript objects
+        }
+
+        var data = {};
+        document.getElementById("submit").addEventListener("click", function() {
+            data = {
+                start_of_employment: $('#date').val().split('-').reverse().join(''),
+                basic_salary: $('#staticincome').val(),
+                monthly_subsidy: $('#incentive').val(),
+                residence_provided: $('#addressinfo').val(),
+                residence_address: $('#address').val(),
+                rent_by_employer: $('#employer2owner').val(),
+                rent_by_employee: $('#employee2owner').val(),
+                rent_returned_to_employee: $('#employer2employee').val(),
+                rent_paid_to_employer: $('#employee2employer').val(),
+                stock_option: $('#shares').val(),
+                overseas: $('#incomeother').val(),
+                nonHK_company_name: $('#namecom').val(),
+                nonHK_company_address: $('#addresscom').val(),
+                residence_type: ($("#com-type").val() != "其他" ? $("#com-type").val() : $("#opt-com-type").val()) || "",
+                nonfixed_income: $('#nonfixed-income').val()
+            }
+
+            var ps = $('#pdfshares')[0].files[0];
+            if($('#shares').val()==1){
+                if(ps){
+                    if(ps.size >= 5000000){
+                        $('#suc').hide();
+                        $('#err5').html("文件大小不能大於5MB");
+                        $('#err5').show();
+                        $('#err4').hide();
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        return;
+                    }
+                }else{
+                    $('#suc').hide();
+                    $('#err4').show();
+                    $('#err5').hide();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+            }
+
+            console.log(data);
+            postData('/candidate/candidateIR56E/#{cid}/#{vid}', data)
+            .then(data => {
+                if(data.status == "ok"){
+                    if($('#shares').val()==1){
+                        let formData = new FormData();
+                        formData.set('file', ps);
+                        axios.post("/upload/ir56e/{#cid}", formData).then((response)=>{
+                            if(response.data.status == "ok"){
+                                $('#suc').show();
+                                $('#err4').hide();
+                                $('#err5').hide();
+                                // redirect to main page after succuessful registration
+                                $('#submit').prop("disabled", true);
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                                setTimeout(()=>{window.location.replace('/');},5000);
+                            }else{
+                                $('#suc').hide();
+                                $('#err5').html(response.data.err_msg);
+                                $('#err5').show();
+                                $('#err4').hide();
+                                $('#submit').prop("disabled", false);
+
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }
+                        })
+                    }else{
+                        $('#suc').show();
+                        $('#err4').hide();
+                        $('#err5').hide();
+                    }
+                }
+                else{
+                    $('#suc').hide();
+                    $('#err5').html(data.err_msg);
+                    $('#err4').hide();
+                    $('#err5').show();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+            
+        });
+        //collect data input

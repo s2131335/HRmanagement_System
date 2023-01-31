@@ -1,0 +1,302 @@
+//- extends ../public/ss
+extends ../user/nav
+block head 
+    //- link(rel='stylesheet' type='text/css' href='/stylesheets/calendar/evo-calendar.css')
+    //- link(rel='stylesheet' type='text/css' href='/stylesheets/calendar/timepicker.less')
+    link(rel='stylesheet' href='/stylesheets/calendar/theme-basic.css')
+    //- link(rel='stylesheet' href='https://cdn.jsdelivr.net/npm/color-calendar/dist/css/theme-glass.css')
+    style.
+        .table-sm
+        .table-sm td{
+        /* padding: 0.3rem; */
+        padding:0;
+        font-weight : normal;
+        }
+        .table-sm>:not(caption)>*>* {
+        /* padding: 0.5rem 1.4rem; */
+        padding:0 !important;
+        }
+        .form-check .form-check-input {
+        /* float: left; */
+        /* margin-left: -1.5em; */
+        float: none;
+        }
+        .table-sm p {
+            margin:0;
+        }
+        td.form-check{
+            width:30px;
+        }
+block content
+    .container.py-5.h-100.text-center
+        //- .row.d-flex.justify-content-center.align-items-center.h-100
+        //- .col-12.col-md-5
+        div#calendar(style="display:inline-block; margin-right: 5%;vertical-align:middle;")
+        //- .col-12.col-md-5
+        div#eventTable(style="display:inline-block;vertical-align:middle;")
+            //- div.events-display
+            table.table-bordered.table-sm
+                thead
+                    tr
+                        td.form-check 
+                            input#chk-all.form-check-input(name="chk-all" type="checkbox" style="margin-left:5px;")
+                        th#selecteddate
+                        th event
+
+                tbody.align-middle(name="list")
+                    - var n = 8;
+                    while n < 23
+                        tr
+                            td.form-check 
+                                input.form-check-input.chkbx(name="chk" type="checkbox" id=n style="margin-left:5px;")
+                            td=`${(n).toString().padStart(2, '0')}:00-${(n+1).toString().padStart(2, '0')}:00`
+                            td(id=`${n++}e`) 空位 
+                    
+            .form.text-right(style="margin-top: 1%")
+                button.btn.btn-primary.btn-sm(id='add' type='button') 加入
+                button.btn.btn-primary.btn-sm(id='reset' type='button') 重設
+
+
+    #exampleModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true')
+        .modal-dialog.modal-lg(role='document')
+            .modal-content
+                .modal-header
+                    h5#exampleModalLabel.modal-title
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') &times;
+                    
+                .modal-body
+                    .container 
+                        table.stripe.my-0(style='width:100%')
+                            thead
+                                tr
+                                    th(scope='col') 工作性質
+                                    th(scope='col') 聘用模式
+                                    th(scope='col') 薪金
+                                    th(scope='col') 學歷要求
+                                    th(scope='col') 學科要求
+                                    th(scope='col') 年資要求
+                            tbody 
+                                tr
+                                    td#nature
+                                    td#employment
+                                    td#job_salary
+                                    td#job_education
+                                    td#major
+                                    td#experience 
+                        hr.my-2
+                        table
+                            tr 
+                                td(style="width:40%") 中文名
+                                td#chinese_name 
+                            tr
+                                td 英文名
+                                td#english_name 
+                            tr 
+                                td 性別
+                                td#gender 
+                            tr 
+                                td 電郵地址
+                                td#email 
+                            tr 
+                                td 教育程度
+                                td#education 
+                            tr 
+                                td 院校名稱
+                                td#institution
+                            tr 
+                                td 學位名稱
+                                td#degree 
+                            tr 
+                                td 感興趣的行業
+                                td#interested
+                            tr 
+                                td 要求月薪
+                                td#salary
+                            tr 
+                                td 簡歷
+                                td
+                                    a#cv.btn.btn-link.btn-lg.btn-block(target="_blank") 查看
+
+
+
+            
+block scrpts
+    script(src='https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js')
+    script(src="/scripts/calendar/bundle.js")
+    //- script(type="text/javascript" src="/scripts/calendar/timepicker.js")
+    //- script(src='https://cdn.jsdelivr.net/npm/color-calendar/dist/bundle.min.js')
+
+
+    // calendar document: https://www.cssscript.com/event-calendar-color/
+    // demo : https://www.cssscript.com/demo/event-calendar-color/
+    script.
+        var currentD;
+        async function getData(url = '', method='') {
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            return response.json();
+        }
+
+        $('#chk-all').change(()=>{
+            $('.chkbx').not(":disabled").prop('checked', $('#chk-all').prop('checked'));
+        })
+        //define getData
+        //- const events = [
+        //-     {
+        //-         start: '2022-11-07T08:00:00',
+        //-         end: '2022-12-07T10:00:00',
+        //-         name: 'Available',
+        //-         url: 'https://www.cssscript.com',
+        //-         desc: 'Description 1',
+        //-     },{
+        //-         start: '2022-11-26T14:00:00',
+        //-         end: '2021-11-26T15:00:00',
+        //-         name: 'abc',
+        //-         url: 'https://www.cssscript.com',
+        //-     },{
+        //-         start: '2022-11-26T13:00:00',
+        //-         end: '2021-11-26T14:00:00',
+        //-         name: 'Available',
+        //-         url: 'https://www.cssscript.com',
+        //-     },{
+        //-         start: '2022-11-26T20:00:00',
+        //-         end: '2021-11-26T21:00:00',
+        //-         name: 'cba',
+        //-         url: 'https://www.cssscript.com',
+        //-     },
+        //- ];
+        let calendar;
+        let data = [];
+
+        function handlePrompt(i){
+            $('#exampleModalLabel').html(data[i].vacancy.positionName);
+            $('#chinese_name').html(data[i].candidate.chinese_name);
+            $('#english_name').html(data[i].candidate.first_name + " " + data[i].candidate.last_name);
+            $('#gender').html(data[i].candidate.gender);
+            $('#email').html(data[i].candidate.email);
+            let ed = data[i].candidate.education;
+            if (ed == '0')
+                $('#education').html("中學畢業");
+            else if (ed == '1')
+                $('#education').html("大學本科畢業");
+            else if (ed == '2')
+                $('#education').html("碩士畢業");
+            else
+                $('#education').html("博士或更高學歷");
+            $('#institution').html(data[i].candidate.institution_name);
+            $('#degree').html(data[i].candidate.name_of_degree);
+            $('#interested').html(data[i].candidate.interested_industry.join(" "));
+            $('#salary').html(data[i].candidate.salary_range);
+            $('#nature').html(data[i].vacancy.jobNature.join(" "));
+            let em_type = data[i].vacancy.employment_type;
+            if(em_type == "0")
+                $('#employment').html("全職")
+            else 
+                $('#employment').html("兼職")
+            $('#job_salary').html(data[i].vacancy.salary);
+            let job_ed = data[i].vacancy.education;
+            if (job_ed == '0')
+                $('#job_education').html("中學畢業");
+            else if (job_ed == '1')
+                $('#job_education').html("大學本科畢業");
+            else if (job_ed == '2')
+                $('#job_education').html("碩士畢業");
+            else
+                $('#job_education').html("博士或更高學歷");
+
+            $('#major').html(data[i].vacancy.major.join(" "));
+            $('#experience').html(data[i].vacancy.experience);
+            $('#cv').attr('href', "/upload/view/can/"+data[i]._id );
+        }
+
+
+        //- let events;
+        $(document).ready(async function() {
+            let events = await getData('/calendar/get-events', 'GET');
+            calendar = new Calendar({
+                calendarSize: 'large',
+                id: '#calendar',
+                eventsData: events,
+                dateChanged: (currentDate, filteredDateEvents) => {
+                    let i = 0;
+                    data = [];
+                    currentD = currentDate;
+                    for(let i=8; i<23; i++){
+                        $(`#${i}e`).html(`<p>空位</p>`);
+                        $(`#${i}`).removeAttr("checked","");
+                        $(`#${i}`).removeAttr("disabled","");
+                    }
+                    if(currentDate < new Date().setHours(0, 0, 0, 0)){
+                        console.log(1);
+                        $('#chk-all').prop('disabled', true);
+                        $("input[name='chk']").prop('disabled', true);
+                        $('#add').prop('disabled', true);
+                        $('#reset').prop('disabled', true);
+                    }else{
+                        $('#chk-all').prop('disabled', false);
+                        $("input[name='chk']").prop('disabled', false);
+                        $('#add').prop('disabled', false);
+                        $('#reset').prop('disabled', false);
+                    }
+                    $('#selecteddate').html(`${currentDate.getDate()}-${currentDate.getMonth()+1}-${currentDate.getFullYear()}`);
+                    //- console.log(filteredDateEvents);
+                    filteredDateEvents.forEach(item=>{
+                        hour =new Date(item.start).getHours();
+                        if (item.name === "接受預約")
+                        $(`#${hour}e`).html(`<p><mark style="background-color: yellow;">${item.name}</mark></p>`);
+                        else{
+                            data.push({vacancy: JSON.parse(item.vacancy), candidate: JSON.parse(item.candidate)});
+                            $(`#${hour}e`).html(`<a data-toggle="modal" data-target="#exampleModal" onclick='handlePrompt(${i})'><mark style="background-color: green;">${item.name}</mark></a>`);
+                            i+=1;
+                        }
+                        $(`#${hour}`).attr("checked","");
+                        $(`#${hour}`).attr("disabled","");
+                    })
+
+                    
+                }
+            })
+
+            })
+        
+
+
+
+
+    
+        $('#add').click(()=>{
+            let data = [];
+            for(let i=8; i<23; i++){
+                if ($(`#${i}`).is(':checked') && !$(`#${i}`).is(':disabled')) {
+                    sd = new Date(currentD).setHours(i);
+                    ed = new Date(currentD).setHours(i+1);
+                    const e={
+                        start: sd,
+                        end: ed,
+                    }
+                    data.push(e);
+                    console.log(data);
+                }
+            }
+            postData('/calendar/new-event', data, 'POST').then((data)=>{
+                //- if(data.status=='error'){
+                //-     alert("增加用戶時出現未知錯誤！");
+                //- }
+                //- else if(data.status=='ok'){
+                    window.location.replace("/internal/user-calendar"); 
+                //}
+            })
+        })
+
+        $('#reset').click(()=>{
+            for(let i=8; i<23; i++){
+                if ($(`#${i}e`).html() == `<p>空位</p>`){
+                    $(`#${i}`)[0].checked=false;
+                }
+            }
+        })

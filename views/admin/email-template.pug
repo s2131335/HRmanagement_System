@@ -1,0 +1,189 @@
+extends ../public/ss
+
+block content
+    form.vh-100.needs-validation(novalidate)
+        .container.py-5.h-100
+            .row.d-flex.justify-content-center.align-items-center.h-100
+                .col-12
+                    .alert.alert-success.fade.show(id='suc' style='display:none') 電郵模板編輯成功，5秒後跳轉到首頁。
+                    .alert.alert-success.fade.show(id='suc2' style='display:none') 圖片上傳成功。
+                    .alert.alert-danger.fade.show(id='err1' style='display:none') 請輸入敬語
+                    .alert.alert-danger.fade.show(id='err2' style='display:none') 請輸入下款
+                    .alert.alert-danger.fade.show(id='err4' style='display:none') 請選擇圖片
+                    .alert.alert-danger.fade.show(id='err3' style='display:none')
+                    .card(style='border-radius: 1rem;')
+                        .card-body.p-5.text-center
+                            h3 電郵模板
+                            .border.mb-3
+                                .p-4
+                                    .row.mb-2
+                                        .col-6
+                                            img#logo.float-left(src="/image/email-logo.png" width="10%")
+                                            button.btn.btn-sm.btn-light.float-left(type="button", data-toggle="modal", data-target="#exampleModal")
+                                                i.fas.fa-pen-to-square
+                                        .col-6
+                                            //- h5.float-right.mt-auto="<收件人>"
+                                    //- .row
+                                    //-     .col-md-12.mb-4
+                                    //-         .form-outline 
+                                    //-             textarea#header.form-control.form-control-lg(name='header' rows=1)=email_text['header']
+                                    //-             label.form-label(for='header') 標頭
+                                    .row
+                                        .col.py-5
+                                            h5="<內容>"
+                                    .row 
+                                        .col-md-4.mb-4
+                                            .form-outline 
+                                                input#complementary.form-control.form-control-lg(name='complementary' required value=email_text['complementary'])
+                                                label.form-label.fr(for='complementary') 敬語
+                                    .row 
+                                        .col-md-4.mb-4
+                                            .form-outline 
+                                                input#sign-offs.form-control.form-control-lg(name='sign-offs' required value=email_text['sign_offs']) 
+                                                label.form-label.fr(for='sign-offs') 下款
+                                    .row 
+                                        .col-md-12.mb-4
+                                            .form-outline 
+                                                textarea#footer.form-control.form-control-lg(name='header' rows=1)=email_text['footer']
+                                                label.form-label(for='header') 頁腳
+
+
+                            .text-center.pt-1.mb-5.pb-1
+                                button.btn.btn-primary.btn-lg.btn-block(id='edit' type='submit') 編輯
+                                a.text-muted(href='/internal/user-management') 返回
+        
+    #exampleModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h5#exampleModalLabel.modal-title 請選擇一個新標誌
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                    span(aria-hidden='true') &times;
+                .modal-body
+                    .row 
+                        input#img(type="file" accept="image/png, image/jpeg, image/jpg")
+                .modal-footer 
+                    button#upload-img.btn.btn-primary(data-dismiss='modal') 上傳
+        
+    style. 
+        .fr:after {
+            content:"*";
+            color: red;
+        }
+                            
+block scrpts 
+    script(src='https://unpkg.com/axios@0.24.0/dist/axios.min.js')
+    script.
+        (() => {
+        'use strict';
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation');
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms).forEach((form) => {
+            form.addEventListener('submit', (event) => {
+                //- console.log(event);
+                form.checkValidity();
+                event.preventDefault();
+                event.stopPropagation();
+                form.classList.add('was-validated');
+                
+            }, false);
+        });
+        })();
+
+        async function postData(url = '', data = {}) {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data) // body data type must match "Content-Type" header
+            });
+            return response.json(); // parses JSON response into native JavaScript objects
+        }
+
+        var data = {};
+        document.getElementById("edit").addEventListener("click", function() {
+            var header = $('#header').val();
+            var complementary = $("#complementary").val();
+            var sign_offs = $("#sign-offs").val();
+            var footer = $("#footer").val();
+            if (complementary == ""){
+                $('#suc').hide();
+                $('#err1').show();
+                $('#err2').hide();
+                $('#err3').hide();
+            }else if (sign_offs == ""){
+                $('#suc').hide();
+                $('#err2').show();
+                $('#err1').hide();
+                $('#err3').hide();
+            }else {
+                data = {header, complementary, sign_offs, footer};
+                //- console.log(data);
+                postData('/internal/email-template', data)
+                .then(data => {
+                    if(data.status == "ok"){
+                        $('#suc').show();
+                        $('#err1').hide();
+                        $('#err2').hide();
+                        $('#err3').hide();
+                        // redirect to main page after succuessful registration
+                        $('input').prop('disabled', true);
+                        $('textarea').prop('disabled', true);
+                        $('#edit').prop('disabled', true);
+                        $('#edit').attr('class', 'btn btn-success btn-lg btn-block');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        setTimeout(()=>{window.location.replace('/');},5000);
+                    }
+                    else{
+                        $('#suc').hide();
+                        $('#err3').html(data.err_msg);
+                        $('#err1').hide();
+                        $('#err2').hide();
+                        $('#err3').show();
+                    }
+                });
+            }
+        });
+
+        $("#upload-img").click(()=>{
+            var img = $('#img')[0].files[0];
+            if(img){
+                let formData = new FormData();
+                formData.set('file', img);
+                axios.post("/internal/email-template-logo/", formData).then((response)=>{
+                    if(response.data.status == "ok"){
+                        $('#suc').hide();
+                        $('#suc2').show();
+                        $('#err2').hide();
+                        $('#err1').hide();
+                        $('#err3').hide();
+                        $('#err4').hide();
+
+                        $("#logo").attr("src", "");
+                        $("#logo").attr("src", "/image/email-logo.png?"+new Date().getTime());
+                        //- console.log($('#logo').src);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }else{
+                        $('#suc').hide();
+                        $('#suc2').hide();
+                        $('#err3').html(response.data.err_msg);
+                        $('#err3').show();
+                        $('#err1').hide();
+                        $('#err2').hide();
+                        $('#err4').hide();
+                        $('#suc3').hide();
+                    }
+                })
+            }else{
+                $('#suc').hide();
+                $('#suc2').hide();
+                $('#err2').hide();
+                $('#err1').hide();
+                $('#err3').hide();
+                $('#err4').show();
+            }
+        })

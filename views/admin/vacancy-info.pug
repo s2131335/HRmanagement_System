@@ -1,0 +1,148 @@
+extends ../user/nav
+
+
+block content
+    .container.pt-2.pb-5
+        //- .card.border-color-dark
+
+        .row.mt-4.mx-2.mb-2
+            .col-md-9
+                h3(style="display:inline")=onePosition.positionName
+                a.btn.btn-link(role="button" style="color: #3b5998;" , data-toggle="modal", data-target="#exampleModal",)    
+                    p(style="display:inline") 詳情
+                    //- i.fas.fa-info
+            .col-md-3
+                h5.text-right.fst-italic.text-muted=onePosition.companyData.companyName
+        .row.mx-3.mb-3
+            table.stripe.my-0(style='width:100%')
+                thead
+                    tr
+                        th(scope='col') 工作性質
+                        th(scope='col') 聘用模式
+                        th(scope='col') 薪金
+                        th(scope='col') 學歷要求
+                        th(scope='col') 學科要求
+                        th(scope='col') 年資要求
+                tbody 
+                    tr
+                        td=onePosition.jobNature.join(', ')
+                        if onePosition.employment_type == '0'
+                            td 全職
+                        else 
+                            td 兼職
+                        td=onePosition.salary
+                        if onePosition.education == '0'
+                            td 中學畢業
+                        else if onePosition.eductaion == '1'
+                            td 大學本科畢業
+                        else if onePosition.education == '2'
+                            td 碩士畢業
+                        else
+                            td 博士或更高學歷
+                        td=onePosition.major.join(', ')
+                        td=onePosition.experience 
+                
+
+        hr
+        .row.mt-5.pt-5
+            .col-md-4.text-center
+                a.btn.btn-floating.btn-primary.btn-lg.mb-5(href='/internal/vacancy/match/'+onePosition._id style="transform: scale(2)")
+                    i.fas.fa-user-plus
+                p 候選人才
+            .col-md-4.text-center
+                a.btn.btn-floating.btn-dark.btn-lg.mb-5(href='/internal/vacancy/'+onePosition._id+"/shortlisted" style="transform: scale(2)")
+                    i.fas.fa-list
+                p 入圍候選人才
+            .col-md-4.text-center
+                a.btn.btn-floating.btn-success.btn-lg.mb-5(href='/internal/vacancy/'+onePosition._id+"/interview" style="transform: scale(2)")
+                    i.fas.fa-handshake
+                p 面試
+        .row.mt-4.pt-5
+            .col-md-12.text-center
+                a.text-muted(href='/internal/vacancy-management') 返回
+
+                    
+                        
+
+
+                    
+
+    #exampleModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true')
+        .modal-dialog.modal-lg(role='document')
+            .modal-content
+                .modal-header
+                    h5#exampleModalLabel.modal-title=onePosition.positionName
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') &times;
+                    
+                .modal-body
+                    table
+                        tr 
+                            td(style="width:50%") 公司名稱
+                            td=onePosition.companyData.companyName
+                        tr 
+                            td 商業登記編號
+                            td=onePosition.companyData.registerNumber
+                        tr 
+                            td 電郵地址
+                            td=onePosition.companyData.email
+                        tr 
+                            td 聯絡人
+                            td=onePosition.companyData.contactName 
+                        tr 
+                            td 聯絡電話
+                            td=onePosition.companyData.phone 
+                        tr
+                            td 工作性質
+                            td=onePosition.jobNature.join(', ')
+                        tr 
+                            td 聘用類型
+                            if onePosition.employMode == '0'
+                                td 合約制
+                            else 
+                                td 長工
+                        tr 
+                            td 聘用模式
+                            if onePosition.employment_type == '0'
+                                td 全職
+                            else 
+                                td 兼職
+                        tr
+                            td 薪金
+                            td=onePosition.salary
+                        tr 
+                            td 詳情
+                            td=onePosition.text
+                        tr 
+                            td 所需技能
+                            td=onePosition.skill_text 
+                        tr 
+                            td 牌照要求
+                            td=onePosition.cert
+                        tr 
+                            td 學歷要求
+                            if onePosition.education == '0'
+                                td 中學畢業
+                            else if onePosition.eductaion == '1'
+                                td 大學本科畢業
+                            else if onePosition.education == '2'
+                                td 碩士畢業
+                            else
+                                td 博士或更高學歷
+                        tr 
+                            td 最低行業年資要求
+                            td=onePosition.experience 
+                        tr 
+                            td 理想行業年資要求
+                            td=onePosition.opt_year 
+                        tr 
+                            td 學科要求
+                            td=onePosition.major.join(', ')
+                        tr
+                            td 行業要求與晉升機會
+                            td=onePosition.opportunity
+
+
+block scrpts
+    script.
+        

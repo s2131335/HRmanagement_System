@@ -1,0 +1,75 @@
+extends ../public/ss 
+
+block content
+    form.vh-100.needs-validation(novalidate)
+        .container.py-5.h-100
+            .row.d-flex.justify-content-center.align-items-center.h-100
+                .col-12.col-md-8.col-lg-6.col-xl-5
+                    .alert.alert-success.fade.show(id='suc' style='display:none') 面試時間段選擇提交成功。
+                    .alert.alert-danger.fade.show(id='err1' style='display:none') 
+                    .card(style='border-radius: 1rem;')
+                        .card-body.p-5.text-center
+                            if booked 
+                                h3.mb-3=pos.positionName
+                                h5.mb-2 您所選的面試時間段：
+                                p #{event.date.start.split("T").join(" ")} - #{event.date.end.split("T")[1]}
+                            else
+                                h3.mb-2 選擇面試時間段
+                                p.text-left 請為所選職位(#{pos.positionName})選擇面試時間段:
+
+                                for r of random 
+                                    .form-input.mb-4
+                                        input.form-check-input(type="radio" name="interview" val=r._id id=r._id)
+                                        label.form-check-label(for)=(r.date.start.split("T").join(" ") + "-" + r.date.end.split("T")[1])
+                                    
+                                .text-center.pt-1.mb-5.pb-1
+                                    button.btn.btn-primary.btn-lg.btn-block(id='submit' type='button') 提交
+
+    style. 
+        .fr:after {
+            content:"*";
+            color: red;
+        }
+
+block scrpts
+    script.
+        (() => {
+        'use strict';
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation');
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms).forEach((form) => {
+            form.addEventListener('submit', (event) => {
+                form.checkValidity()
+                event.preventDefault();
+                event.stopPropagation();
+            form.classList.add('was-validated');
+            }, false);
+        });
+        })();
+
+        $('#submit').click(()=>{
+            var selected = $('input[type="radio"]').filter(":checked").attr('id');
+            console.log(selected);
+            if(selected != null){
+                var data = {eventId: selected};
+                postData('', data, "POST").then((response)=>{
+                    if(response.status == "ok"){
+                        $('#suc').show();
+                        $('#err1').hide();
+                        $('input').prop('disabled', true);
+                        $('button').prop('disabled', true);
+                    }else{
+                        $('#suc').hide();
+                        $('#err1').html(response.err_msg);
+                        $('#err1').show();
+                    }
+                })
+            }else{
+                $('#err1').html("請選擇一個面試時間段");
+                $('#err1').show();
+            }
+            
+        })

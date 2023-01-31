@@ -1,0 +1,111 @@
+extends ../public/ss
+
+block content
+    form.vh-100.needs-validation( novalidate)
+        .container.py-2
+            //- .row.d-flex.justify-content-center.align-items-center.h-100
+            .card
+                .card-body.p-6.w-80
+                    h1.text-center 能力測試
+                    hr
+                    //- render a div with id="questions", and use each to loop the options inside questions of test
+                    #questions
+                        - var n = 0;
+                        each question in test
+                            .d-flex.flex-column.mb-6
+                                p=`Q${++n})  ${question.title}`
+                                //- .btn-group
+                                .form-check.mb-4.col
+                                    input.form-check-input(type='radio' name=n id=question.option[0].oid)
+                                    //- if question.options[0].img
+                                    //-     img(src= question.options[0].img).w-50
+                                    label.form-check-label(for=question.option[0].oid) #{question.option[0].text}
+
+                                .form-check.mb-4.col
+                                    input.form-check-input(type='radio' name=n id=question.option[0].oid)
+                                    //- if question.options[1].img
+                                    //-     img(src= question.options[1].img).w-50
+                                    label.form-check-label(for=question.option[1].oid) #{question.option[1].text}
+
+                                .form-check.mb-4.col
+                                    input.form-check-input(type='radio' name=n id=question.option[0].oid)
+                                    //- if question.options[2].img
+                                    //-     img(src= question.options[2].img).w-50
+                                    label.form-check-label(for=question.option[2].oid) #{question.option[2].text}
+
+                                .form-check.mb-4.col
+                                    input.form-check-input(type='radio' name=n id=question.option[0].oid)
+                                    //- if question.options[3].img
+                                    //-     img(src= question.options[3].img).w-50
+                                    label.form-check-label(for=question.option[3].oid) #{question.option[3].text}
+
+                button.btn.btn-primary.btn-lg.btn-block.w-30(id='submitapt' type='submit') 遞交
+
+                                
+
+                        
+block scrpts
+    script.
+        (() => {
+        'use strict';
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation');
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms).forEach((form) => {
+            form.addEventListener('submit', (event) => {
+                form.checkValidity()
+                event.preventDefault();
+                event.stopPropagation();
+            form.classList.add('was-validated');
+            }, false);
+        });
+        })();
+
+        //Get all the answers by candidate and put them in the array
+
+        let candidateId = "";
+        $(document).ready(function(){
+            var url_string = window.location;
+            var url = new URL(url_string);
+            var name = url.pathname;
+            candidateId = name.split('/')[3];
+        });
+
+        async function postData(url = '', data = {}) {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data) // body data type must match "Content-Type" header
+            });
+            return response.json(); // parses JSON response into native JavaScript objects
+        }
+
+        var candidateAnswer=[];
+        document.getElementById('submitapt').addEventListener('click', ()=>{
+            for (let i=0; i<10; i++){
+                const ans = Array.from(document.getElementsByName(i+1));
+                ans.forEach(answer=>{
+                if (answer.checked == true){
+                        candidateAnswer[i]=answer.id
+                    }
+                })
+            }
+            data={candidateAnswer};
+            console.log(data);
+
+            postData('/aptest/checkAnswer/'+candidateId, data)
+            .then(data => {
+                if(data.status == "ok"){
+                    window.location.replace("/aptest/done");
+                }
+                else{
+                    alert("提交能力測試時出錯!")
+                }
+            });
+        })
+
+        
